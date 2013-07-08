@@ -47,6 +47,10 @@ public class CharacteristicQuantification implements ICharacteristicQuantificati
         this.xsiType = xsiType;
     }
 
+    public String getXsiType() {
+        return xsiType;
+    }    
+
     @Override
     public Double getAnnotatorConfidence() {
         return annotatorConfidence;

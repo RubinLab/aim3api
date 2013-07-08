@@ -32,6 +32,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
 /**
@@ -63,15 +64,35 @@ public class CharacteristicQuantificationCollection implements IAimXMLOperations
 
     @Override
     public void setXMLNode(Node node) {
-
         this.listCharacteristicQuantification.clear();
-
         NodeList tempList = node.getChildNodes();
         for (int j = 0; j < tempList.getLength(); j++) {
-            if ("CharacteristicQuantification".equals(tempList.item(j).getNodeName())) {
-                CharacteristicQuantification obj = new CharacteristicQuantification();
-                obj.setXMLNode(tempList.item(j));
-                this.AddCharacteristicQuantification(obj);
+            Node currentNode = tempList.item(j);
+            if ("CharacteristicQuantification".equals(currentNode.getNodeName())) {
+
+                NamedNodeMap map = currentNode.getAttributes();
+                String xsiType = map.getNamedItem("xsi:type").getNodeValue();
+                if ("Quantile".equals(xsiType)) {
+                    Quantile obj = new Quantile();
+                    obj.setXMLNode(currentNode);
+                    this.AddCharacteristicQuantification(obj);
+                } else if ("Scale".equals(xsiType)) {
+                    Scale obj = new Scale();
+                    obj.setXMLNode(currentNode);
+                    this.AddCharacteristicQuantification(obj);
+                } else if ("Numerical".equals(xsiType)) {
+                    Numerical obj = new Numerical();
+                    obj.setXMLNode(currentNode);
+                    this.AddCharacteristicQuantification(obj);
+                } else if ("NonQuantifiable".equals(xsiType)) {
+                    NonQuantifiable obj = new NonQuantifiable();
+                    obj.setXMLNode(currentNode);
+                    this.AddCharacteristicQuantification(obj);
+                } else if ("Interval".equals(xsiType)) {
+                    Interval obj = new Interval();
+                    obj.setXMLNode(currentNode);
+                    this.AddCharacteristicQuantification(obj);
+                }
             }
         }
     }

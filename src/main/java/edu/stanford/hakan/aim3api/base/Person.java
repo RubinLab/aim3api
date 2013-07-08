@@ -48,6 +48,9 @@ public class Person implements IAimXMLOperations {
     private boolean dontCreateOwlIntance = false;
     private boolean dontAddIndexAsPostFixToRdfInstanceName = false;
 
+    
+    
+    
     public void setDontAddIndexAsPostFixToRdfInstanceName(boolean dontAddIndexAsPostFixToRdfInstanceName) {
         this.dontAddIndexAsPostFixToRdfInstanceName = dontAddIndexAsPostFixToRdfInstanceName;
     }
@@ -64,11 +67,11 @@ public class Person implements IAimXMLOperations {
         this.birthDate = birthDate;
     }
 
-    public Integer getCagridId() {
+    public Integer getCagridId() throws AimException {
         return cagridId;
     }
 
-    public void setCagridId(Integer cagridId) {
+    public void setCagridId(Integer cagridId)  throws AimException {
         this.cagridId = cagridId;
     }
 
