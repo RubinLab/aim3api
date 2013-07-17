@@ -2,14 +2,6 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>edu.stanford.hakan.aim3api</groupId>
-  <artifactId>aim3api</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0</version>
-  <name>AIM 3 API</name>
-
-  <url>http://maven.apache.org</url>
-
   <parent>
     <groupId>edu.stanford.isis</groupId>
     <artifactId>epad-project</artifactId>
@@ -17,10 +9,15 @@
     <version>1.2-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <junit.version>3.8.1</junit.version>
+  <groupId>edu.stanford.hakan.aim3api</groupId>
+  <artifactId>aim3api</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <name>AIM 3 API</name>
 
+  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <junit.version>3.8.1</junit.version>
   </properties>
 
   <dependencies>
