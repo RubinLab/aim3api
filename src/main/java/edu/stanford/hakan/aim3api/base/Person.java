@@ -46,9 +46,7 @@ public class Person implements IAimXMLOperations {
     private String ethnicGroup;
     private String rdfID;
     private boolean dontCreateOwlIntance = false;
-    private boolean dontAddIndexAsPostFixToRdfInstanceName = false;
-
-    
+    private boolean dontAddIndexAsPostFixToRdfInstanceName = false;    
     
     
     public void setDontAddIndexAsPostFixToRdfInstanceName(boolean dontAddIndexAsPostFixToRdfInstanceName) {

@@ -156,3 +156,8 @@ public class Numerical extends CharacteristicQuantification implements IAimXMLOp
         return super.isEqualTo(other);
     }
 }
+
+/*
+ * 
+ */
+

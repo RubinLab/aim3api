@@ -179,8 +179,7 @@ public class ImageAnnotation extends Annotation implements IAimXMLOperations {
                     }
                 }
             }
-        }
-    
+        }    
     }
 
     @Override

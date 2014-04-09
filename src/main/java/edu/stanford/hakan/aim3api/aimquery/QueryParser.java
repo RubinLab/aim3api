@@ -106,7 +106,7 @@ public class QueryParser {
         listUpdatedExpressions.addAll(Arrays.asList(updatedWhereClause.split(spliter)));
 
         for (int i = 0; i < listUpdatedExpressions.size(); i++) {
-            regex = "([a-zA-Z][a-zA-Z0-9]*)\\.([a-zA-Z][a-zA-Z0-9]*)\\s*(=|(?:<>)|(?:>=)|(?:<=)|(?:<)|(?:>)|(?:(?i)like))\\s*('?[a-zA-Z0-9\\s\\)\\(\\.%~]*'?)";
+            regex = "([a-zA -Z][a-zA-Z0-9]*)\\.([a-zA-Z][a-zA-Z0-9]*)\\s*(=|(?:<>)|(?:>=)|(?:<=)|(?:<)|(?:>)|(?:(?i)like))\\s*('?[a-zA-Z0-9\\s\\)\\(\\.%~]*'?)";
             pattern = Pattern.compile(regex);
             matcher = pattern.matcher(listUpdatedExpressions.get(i));
             boolean find = false;

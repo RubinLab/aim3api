@@ -37,7 +37,7 @@ import java.util.Locale;
  */
 public class AimQuery {
 
-    public static String convertToXQuery(String aimQuery,String nameSpace) throws AimException {
+    public static String convertToXQuery(String aimQuery, String nameSpace) throws AimException {
         QueryParser myParser = new QueryParser(aimQuery);
         String collectionName = myParser.getAimCollection();
         String whereClause = myParser.getWhereClause();
@@ -48,18 +48,19 @@ public class AimQuery {
             String xQuery = exp.getxQuery();
             whereClause = whereClause.replace(expression, xQuery);
         }
-        
-      //whereClause += " and ($x[fn:string-length(@aimVersion) < 10] or $x[contains(lower-case(@aimVersion), lower-case('current')]))";
-       //whereClause += " and $x[ends-with(lower-case(@aimVersion),'aim.3.0')]";
+
+        //whereClause += " and ($x[fn:string-length(@aimVersion) < 10] or $x[contains(lower-case(@aimVersion), lower-case('current')]))";
+        //whereClause += " and $x[ends-with(lower-case(@aimVersion),'aim.3.0')]";
         //whereClause += " and $x[string-length(@aimVersion) < 100]";
-        
+
         //*** to be sure, user does not want to query aimVersion field and this is not valuable while querying  the uniqueIdentifier
         if (whereClause.toLowerCase(new Locale("\\u0131")).indexOf("aimVersion".toLowerCase(new Locale("\\u0131"))) < 0 && whereClause.toLowerCase(new Locale("\\u0131")).indexOf("$x[lower-case(@uniqueIdentifier) = lower-case('".toLowerCase(new Locale("\\u0131"))) != 0) {
             whereClause += " and ($x[not(contains(@aimVersion,'^'))] or $x[contains(lower-case(@aimVersion),lower-case('current'))])";
         }
-        
-        if(!"/".equals(collectionName.substring(0, 1)))
+
+        if (!"/".equals(collectionName.substring(0, 1))) {
             collectionName = "/" + collectionName;
+        }
         String res = "declare default element namespace '" + nameSpace + "'; for $x in collection('" + collectionName + "')/ImageAnnotation where " + whereClause + " return $x";
         return res.replaceAll(" (?i)and ", " and ").replaceAll(" (?i)or ", " or ");
     }

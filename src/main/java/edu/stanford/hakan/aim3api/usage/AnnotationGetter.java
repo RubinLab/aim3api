@@ -48,7 +48,6 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -947,4 +946,69 @@ public class AnnotationGetter {
         res = getImageAnnotationsFromServerWithAimQuery(serverURL, namespace, dbUserName, dbUserPassword, aimQL, "");
         return res;
     }
+
+    // *** count by personName
+    public static int getCountImageAnnotationByPersonNameEqual(String serverURL,
+            String nameSpace, String collection, String dbUserName, String dbUserPassword,
+            String personName) throws AimException {
+        String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/person/Person[lower-case(@name)=lower-case('" + personName + "')])";
+        String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
+        Document serverDoc = getDocumentFromString(serverResponse);
+        String res = getExistResultValueFromDocument(serverDoc);
+        return Integer.parseInt(res);
+    }
+
+    // *** count by uniqueIdentifier
+    public static int getCountImageAnnotationByUniqueIdentifierEqual(String serverURL,
+            String nameSpace, String collection, String dbUserName, String dbUserPassword,
+            String uniqueIdentifier) throws AimException {
+        String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation[lower-case(@uniqueIdentifier)=lower-case('" + uniqueIdentifier + "')])";
+        String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
+        Document serverDoc = getDocumentFromString(serverResponse);
+        String res = getExistResultValueFromDocument(serverDoc);
+        return Integer.parseInt(res);
+    }
+
+    // *** count by userLoginName
+    public static int getCountImageAnnotationByUserLoginNameContains(String serverURL,
+            String nameSpace, String collection, String dbUserName, String dbUserPassword,
+            String loginName) throws AimException {
+        String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/user/User[contains(lower-case(@loginName),lower-case('" + loginName + "'))])";
+        String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
+        Document serverDoc = getDocumentFromString(serverResponse);
+        String res = getExistResultValueFromDocument(serverDoc);
+        return Integer.parseInt(res);
+    }    
+    
+    // *** count by personID and userName
+    public static int getCountImageAnnotationByPersonIdAndUserNameEqual(String serverURL,
+            String nameSpace, String collection, String dbUserName, String dbUserPassword,
+            String personID, String userName) throws AimException {
+        String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/person/Person[lower-case(@id)=lower-case('" + personID + "')] AND /collection('" + collection + "')/ImageAnnotation/user/User[lower-case(@name)=lower-case('" + userName + "')] )";
+        String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
+        Document serverDoc = getDocumentFromString(serverResponse);
+        String res = getExistResultValueFromDocument(serverDoc);
+        return Integer.parseInt(res);
+    }    
+    
+    // *** count by ImageSeries InstanceUid
+    public static int getCountImageAnnotationByImageSeriesInstanceUidEqual(String serverURL,
+            String nameSpace, String collection, String dbUserName, String dbUserPassword,
+            String InstanceUid) throws AimException {
+        String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/imageReferenceCollection/ImageReference/imageStudy/ImageStudy/imageSeries/ImageSeries[lower-case(@instanceUID)=lower-case('" + InstanceUid + "')])";
+        String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
+        Document serverDoc = getDocumentFromString(serverResponse);
+        String res = getExistResultValueFromDocument(serverDoc);
+        return Integer.parseInt(res);
+    }
+
+    public static String getExistResultValueFromDocument(Document doc) {
+        Node firstNode = doc.getFirstChild();
+        List<Node> listResult = getNodesFromNodeByName(firstNode, "exist:result");
+        if (listResult.size() > 0) {
+            return listResult.get(0).getTextContent().trim();
+        }
+        return "";
+    }
+
 }
