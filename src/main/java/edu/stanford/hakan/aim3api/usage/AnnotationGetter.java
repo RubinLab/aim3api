@@ -338,9 +338,8 @@ public class AnnotationGetter {
             throw new AimException(ex.getMessage());
         }
     }
-    
-    public static List<ImageAnnotation> getImageAnnotationsFromString(String text, String PathXSD) throws AimException
-    {        
+
+    public static List<ImageAnnotation> getImageAnnotationsFromString(String text, String PathXSD) throws AimException {
         try {
             Document serverDoc = getDocumentFromString(text);
             List<ImageAnnotation> res = getImageAnnotationListFromDocument(serverDoc, PathXSD);
@@ -955,6 +954,9 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
+        if (res == null) {
+            return -1;
+        }
         return Integer.parseInt(res);
     }
 
@@ -966,6 +968,9 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
+        if (res == null) {
+            return -1;
+        }
         return Integer.parseInt(res);
     }
 
@@ -977,9 +982,12 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
+        if (res == null) {
+            return -1;
+        }
         return Integer.parseInt(res);
-    }    
-    
+    }
+
     // *** count by personID and userName
     public static int getCountImageAnnotationByPersonIdAndUserNameEqual(String serverURL,
             String nameSpace, String collection, String dbUserName, String dbUserPassword,
@@ -988,9 +996,12 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
+        if (res == null) {
+            return -1;
+        }
         return Integer.parseInt(res);
-    }    
-    
+    }
+
     // *** count by ImageSeries InstanceUid
     public static int getCountImageAnnotationByImageSeriesInstanceUidEqual(String serverURL,
             String nameSpace, String collection, String dbUserName, String dbUserPassword,
@@ -999,6 +1010,9 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
+        if (res == null) {
+            return -1;
+        }
         return Integer.parseInt(res);
     }
 
@@ -1010,5 +1024,4 @@ public class AnnotationGetter {
         }
         return "";
     }
-
 }
