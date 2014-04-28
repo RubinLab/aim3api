@@ -26,6 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package edu.stanford.hakan.aim3api.usage;
+import java.util.UUID;
 
 import java.io.File;
 import javax.xml.parsers.*;
@@ -65,7 +66,8 @@ public class AnnotationValidator {
     }
 
     public static boolean ValidateXML(Document doc, String PathXSD) {
-        String tempXmlPath = "temp" + Calendar.getInstance().getTimeInMillis() + ".xml";
+        //String tempXmlPath = "temp" + Calendar.getInstance().getTimeInMillis() + ".xml";
+        String tempXmlPath = "/tmp/temp" + UUID.randomUUID() + ".xml";
         Source source = documentToSource(doc, tempXmlPath);
         if (source == null) {
             return false;
