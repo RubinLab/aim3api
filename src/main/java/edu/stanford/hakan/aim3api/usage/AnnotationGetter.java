@@ -954,10 +954,11 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
-        if (res == null) {
+        try {
+            return Integer.parseInt(res);
+        } catch (Exception ex) {
             return -1;
         }
-        return Integer.parseInt(res);
     }
 
     // *** count by uniqueIdentifier
@@ -968,10 +969,11 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
-        if (res == null) {
+        try {
+            return Integer.parseInt(res);
+        } catch (Exception ex) {
             return -1;
         }
-        return Integer.parseInt(res);
     }
 
     // *** count by userLoginName
@@ -982,10 +984,11 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
-        if (res == null) {
+        try {
+            return Integer.parseInt(res);
+        } catch (Exception ex) {
             return -1;
         }
-        return Integer.parseInt(res);
     }
 
     // *** count by personID and userName
@@ -996,10 +999,11 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
-        if (res == null) {
+        try {
+            return Integer.parseInt(res);
+        } catch (Exception ex) {
             return -1;
         }
-        return Integer.parseInt(res);
     }
 
     // *** count by ImageSeries InstanceUid
@@ -1010,10 +1014,11 @@ public class AnnotationGetter {
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
-        if (res == null) {
+        try {
+            return Integer.parseInt(res);
+        } catch (Exception ex) {
             return -1;
         }
-        return Integer.parseInt(res);
     }
 
     public static String getExistResultValueFromDocument(Document doc) {
