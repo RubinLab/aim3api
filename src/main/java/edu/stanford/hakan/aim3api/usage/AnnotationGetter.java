@@ -995,7 +995,9 @@ public class AnnotationGetter {
     public static int getCountImageAnnotationByPersonIdAndUserNameEqual(String serverURL,
             String nameSpace, String collection, String dbUserName, String dbUserPassword,
             String personID, String userName) throws AimException {
-        String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/person/Person[lower-case(@id)=lower-case('" + personID + "')] AND /collection('" + collection + "')/ImageAnnotation/user/User[lower-case(@name)=lower-case('" + userName + "')] )";
+        String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/person/Person[lower-case(@id)=lower-case('" + personID + "')] and /collection('" + collection + "')/ImageAnnotation/user/User[lower-case(@name)=lower-case('" + userName + "')])";
+        //String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/person/Person[lower-case(@id)=lower-case('" + personID + "')])";
+        //String XQuery = "declare default element namespace '" + nameSpace + "'; count(/collection('" + collection + "')/ImageAnnotation/user/User[lower-case(@name)=lower-case('" + userName + "')])";
         String serverResponse = getXMLStringFromExist(serverURL, XQuery, dbUserName, dbUserPassword);
         Document serverDoc = getDocumentFromString(serverResponse);
         String res = getExistResultValueFromDocument(serverDoc);
