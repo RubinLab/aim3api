@@ -65,11 +65,11 @@ public class Person implements IAimXMLOperations {
         this.birthDate = birthDate;
     }
 
-    public Integer getCagridId() throws AimException {
+    public Integer getCagridId() {
         return cagridId;
     }
 
-    public void setCagridId(Integer cagridId)  throws AimException {
+    public void setCagridId(Integer cagridId) {
         this.cagridId = cagridId;
     }
 
