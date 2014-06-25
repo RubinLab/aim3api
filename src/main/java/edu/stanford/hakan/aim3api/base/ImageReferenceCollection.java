@@ -41,7 +41,7 @@ import org.w3c.dom.NodeList;
  */
 public class ImageReferenceCollection  implements IAimXMLOperations  {
     
-     private List<ImageReference> listImageReference = new ArrayList<ImageReference>();
+    private List<ImageReference> listImageReference = new ArrayList<ImageReference>();
    
     public void AddImageReference(ImageReference newImageReference)
     {
@@ -124,6 +124,5 @@ public class ImageReferenceCollection  implements IAimXMLOperations  {
             }
         }
         return true;
-    }
-    
+    }    
 }

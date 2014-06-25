@@ -66,8 +66,9 @@ public class AnnotationValidator {
     }
 
     public static boolean ValidateXML(Document doc, String PathXSD) {
-        //String tempXmlPath = "temp" + Calendar.getInstance().getTimeInMillis() + ".xml";
+        //String tempXmlPath = "temp" + UUID.randomUUID() + ".xml";
         String tempXmlPath = "/tmp/temp" + UUID.randomUUID() + ".xml";
+        //String tempXmlPath = "temp" + UUID.randomUUID() + ".xml";
         Source source = documentToSource(doc, tempXmlPath);
         if (source == null) {
             return false;
