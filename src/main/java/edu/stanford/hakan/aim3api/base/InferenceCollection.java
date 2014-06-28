@@ -42,6 +42,9 @@ public class InferenceCollection implements IAimXMLOperations {
 
     private List<Inference> listInference = new ArrayList<Inference>();
 
+    InferenceCollection() {
+    }
+
     public void AddInference(Inference newInference) {
         this.listInference.add(newInference);
     }
@@ -88,7 +91,7 @@ public class InferenceCollection implements IAimXMLOperations {
             parentNode.appendChild(eHas);
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         InferenceCollection oth = (InferenceCollection) other;
         if (this.listInference.size() != oth.listInference.size()) {
@@ -100,5 +103,21 @@ public class InferenceCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.InferenceEntityCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.InferenceEntityCollection res = new edu.stanford.hakan.aim4api.base.InferenceEntityCollection();
+        List<Inference> list = this.getInferenceList();
+        for (Inference itemV3 : list) {
+            res.addInferenceEntity(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public InferenceCollection(edu.stanford.hakan.aim4api.base.InferenceEntityCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.InferenceEntity> listV4 = v4.getInferenceEntityList();
+        for (edu.stanford.hakan.aim4api.base.InferenceEntity itemV4 : listV4) {
+            this.AddInference(new Inference(itemV4));
+        }
     }
 }

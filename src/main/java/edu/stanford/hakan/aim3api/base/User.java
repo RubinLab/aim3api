@@ -27,6 +27,7 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -132,7 +133,7 @@ public class User implements IAimXMLOperations {
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
 
         this.Control();
-        
+
         Element eUser = doc.createElement(Prefix + "User");
         eUser.setAttribute("rdf:ID", "User_".concat(unquieID));
 
@@ -179,8 +180,7 @@ public class User implements IAimXMLOperations {
             throw new AimException("AimException: User's loginName can not be null");
         }
     }
-    
-    
+
     public boolean isEqualTo(Object other) {
         User oth = (User) other;
         if (this.cagridId != oth.cagridId) {
@@ -199,5 +199,28 @@ public class User implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.User toAimV4() {
+        edu.stanford.hakan.aim4api.base.User res = new edu.stanford.hakan.aim4api.base.User();
+        res.setLoginName(Converter.toST(this.getLoginName()));//
+        res.setName(Converter.toST(this.getName()));//
+        res.setNumberWithinRoleOfClinicalTrial(this.getNumberWithinRoleOfClinicalTrial());
+        res.setRoleInTrial(Converter.toST(this.getRoleInTrial()));
+        return res;
+    }
+
+    public User(edu.stanford.hakan.aim4api.base.User v4) {
+        this.setCagridId(0);
+        if (v4.getLoginName() != null) {
+            this.setLoginName(v4.getLoginName().getValue());
+        }
+        if (v4.getName() != null) {
+            this.setName(v4.getName().getValue());
+        }
+        this.setNumberWithinRoleOfClinicalTrial(v4.getNumberWithinRoleOfClinicalTrial());
+        if (v4.getRoleInTrial() != null) {
+            this.setRoleInTrial(v4.getRoleInTrial().getValue());
+        }
     }
 }

@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -107,9 +108,9 @@ public class Image implements IAimXMLOperations {
 
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
-        
+
         this.Control();
-        
+
         Element eImage = doc.createElement(Prefix + "Image");
         eImage.setAttribute("rdf:ID", "Image_".concat(unquieID));
 
@@ -147,7 +148,7 @@ public class Image implements IAimXMLOperations {
             throw new AimException("AimException: Image's sopInstanceUID can not be null");
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         Image oth = (Image) other;
         if (this.cagridId != oth.cagridId) {
@@ -160,5 +161,22 @@ public class Image implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.Image toAimV4() {
+        edu.stanford.hakan.aim4api.base.Image res = new edu.stanford.hakan.aim4api.base.Image();
+        res.setSopClassUid(Converter.toII(this.getSopClassUID()));
+        res.setSopInstanceUid(Converter.toII(this.getSopInstanceUID()));
+        return res;
+    }
+
+    public Image(edu.stanford.hakan.aim4api.base.Image v4) {
+        this.setCagridId(0);
+        if (v4.getSopClassUid() != null) {
+            this.setSopClassUID(v4.getSopClassUid().getRoot());
+        }
+        if (v4.getSopInstanceUid() != null) {
+            this.setSopInstanceUID(v4.getSopInstanceUid().getRoot());
+        }
     }
 }

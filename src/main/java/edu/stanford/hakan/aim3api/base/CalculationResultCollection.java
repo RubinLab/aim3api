@@ -42,6 +42,9 @@ public class CalculationResultCollection implements IAimXMLOperations {
 
     private List<CalculationResult> listCalculationResult = new ArrayList<CalculationResult>();
 
+    CalculationResultCollection() {
+    }
+
     public void AddCalculationResult(CalculationResult newCalculationResult) {
         this.listCalculationResult.add(newCalculationResult);
     }
@@ -61,10 +64,10 @@ public class CalculationResultCollection implements IAimXMLOperations {
     }
 
     @Override
-    public void setXMLNode(Node node) {      
-        
+    public void setXMLNode(Node node) {
+
         this.listCalculationResult.clear();
-        
+
         NodeList tempList = node.getChildNodes();
         for (int j = 0; j < tempList.getLength(); j++) {
             if ("CalculationResult".equals(tempList.item(j).getNodeName())) {
@@ -76,20 +79,18 @@ public class CalculationResultCollection implements IAimXMLOperations {
     }
 
     @Override
-    public Node getRDFNode(Document doc,String unquieID,String Prefix) {
+    public Node getRDFNode(Document doc, String unquieID, String Prefix) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    
-    public void appendNodes(Document doc, String unquieID, Node parentNode,String Prefix) throws AimException {
+
+    public void appendNodes(Document doc, String unquieID, Node parentNode, String Prefix) throws AimException {
         for (int i = 0; i < listCalculationResult.size(); i++) {
             Element eHas = doc.createElement(Prefix + "hasCalculationResult");
-            eHas.appendChild(listCalculationResult.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)),Prefix));
+            eHas.appendChild(listCalculationResult.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)), Prefix));
             parentNode.appendChild(eHas);
         }
     }
-    
-        
+
     public boolean isEqualTo(Object other) {
         CalculationResultCollection oth = (CalculationResultCollection) other;
         if (this.listCalculationResult.size() != oth.listCalculationResult.size()) {
@@ -101,5 +102,21 @@ public class CalculationResultCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.CalculationResultCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.CalculationResultCollection res = new edu.stanford.hakan.aim4api.base.CalculationResultCollection();
+        List<edu.stanford.hakan.aim3api.base.CalculationResult> list = this.getCalculationResultList();
+        for (edu.stanford.hakan.aim3api.base.CalculationResult itemV3 : list) {
+            res.addCalculationResult(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public CalculationResultCollection(edu.stanford.hakan.aim4api.base.CalculationResultCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.ExtendedCalculationResult> listV4 = v4.getExtendedCalculationResultList();
+        for (edu.stanford.hakan.aim4api.base.ExtendedCalculationResult itemV4 : listV4) {
+            this.AddCalculationResult(new CalculationResult(itemV4));
+        }
     }
 }

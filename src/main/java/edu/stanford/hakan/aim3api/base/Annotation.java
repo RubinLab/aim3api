@@ -46,10 +46,10 @@ import org.w3c.dom.Node;
 @SuppressWarnings("serial")
 public class Annotation implements IAimXMLOperations, IAnnotation {
 
-    private CalculationCollection calculationCollection;
-    private InferenceCollection inferenceCollection;
-    private AnatomicEntityCollection anatomicEntityCollection;
-    private ImagingObservationCollection imagingObservationCollection;
+    private CalculationCollection calculationCollection = new CalculationCollection();
+    private InferenceCollection inferenceCollection = new InferenceCollection();
+    private AnatomicEntityCollection anatomicEntityCollection = new AnatomicEntityCollection();
+    private ImagingObservationCollection imagingObservationCollection = new ImagingObservationCollection();
     private List<User> listUser = new ArrayList<User>();
     private List<Equipment> listEquipment = new ArrayList<Equipment>();
     private List<AimStatus> listAimStatus = new ArrayList<AimStatus>();
@@ -73,10 +73,6 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
     public Annotation() {
         this.uniqueIdentifier = GenerateId.getUUID();
         this.aimVersion = "AIM.3.0";
-        this.calculationCollection = new CalculationCollection();
-        this.inferenceCollection = new InferenceCollection();
-        this.anatomicEntityCollection = new AnatomicEntityCollection();
-        this.imagingObservationCollection = new ImagingObservationCollection();
     }
 
     public Annotation(Integer cagridId, String comment, String dateTime, String name, String codeValue, String codeMeaning, String codingSchemeDesignator, String codingSchemeVersion, String precedentReferencedAnnotationUID) {
@@ -91,10 +87,6 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
         this.codingSchemeDesignator = codingSchemeDesignator;
         this.codingSchemeVersion = codingSchemeVersion;
         this.precedentReferencedAnnotationUID = precedentReferencedAnnotationUID;
-        this.calculationCollection = new CalculationCollection();
-        this.inferenceCollection = new InferenceCollection();
-        this.anatomicEntityCollection = new AnatomicEntityCollection();
-        this.imagingObservationCollection = new ImagingObservationCollection();
     }
 
     @Override

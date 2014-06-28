@@ -37,47 +37,47 @@ import org.w3c.dom.NamedNodeMap;
  * @author Hakan BULU
  */
 public class Coordinate implements IAimXMLOperations {
-
+    
     private Integer cagridId;
     private Integer dimensionIndex;
     private Integer position;
-
+    
     public Coordinate() {
     }
-
+    
     public Coordinate(Integer cagridId, Integer dimensionIndex, Integer position) {
         this.cagridId = cagridId;
         this.dimensionIndex = dimensionIndex;
         this.position = position;
     }
-
+    
     public Integer getCagridId() {
         return cagridId;
     }
-
+    
     public void setCagridId(Integer cagridId) {
         this.cagridId = cagridId;
     }
-
+    
     public Integer getDimensionIndex() {
         return dimensionIndex;
     }
-
+    
     public void setDimensionIndex(Integer dimensionIndex) {
         this.dimensionIndex = dimensionIndex;
     }
-
+    
     public Integer getPosition() {
         return position;
     }
-
+    
     public void setPosition(Integer position) {
         this.position = position;
     }
-
+    
     @Override
     public Node getXMLNode(Document doc) throws AimException {
-
+        
         this.Control();
         
         Element coordinate = doc.createElement("Coordinate");
@@ -86,7 +86,7 @@ public class Coordinate implements IAimXMLOperations {
         coordinate.setAttribute("position", this.position.toString());
         return coordinate;
     }
-
+    
     @Override
     public void setXMLNode(Node node) {
         NamedNodeMap map = node.getAttributes();
@@ -94,7 +94,7 @@ public class Coordinate implements IAimXMLOperations {
         this.dimensionIndex = Integer.parseInt(map.getNamedItem("dimensionIndex").getNodeValue());
         this.position = Integer.parseInt(map.getNamedItem("position").getNodeValue());
     }
-
+    
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
         
@@ -102,27 +102,26 @@ public class Coordinate implements IAimXMLOperations {
         
         Element eCoordinate = doc.createElement(Prefix + "Coordinate");
         eCoordinate.setAttribute("rdf:ID", "Coordinate_".concat(unquieID));
-
+        
         Element eCagridId = doc.createElement(Prefix + "cagridId");
         eCagridId.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#int");
         eCagridId.setTextContent(this.cagridId.toString());
         eCoordinate.appendChild(eCagridId);
-
+        
         Element eDimensionIndex = doc.createElement(Prefix + "dimensionIndex");
         eDimensionIndex.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#int");
         eDimensionIndex.setTextContent(this.dimensionIndex.toString());
         eCoordinate.appendChild(eDimensionIndex);
-
+        
         Element ePosition = doc.createElement(Prefix + "position");
         ePosition.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#int");
         ePosition.setTextContent(this.position.toString());
         eCoordinate.appendChild(ePosition);
-
+        
         return eCoordinate;
-
-
+        
     }
-
+    
     private void Control() throws AimException {
         if (getCagridId() == null) {
             throw new AimException("AimException: Coordinate's cagridId can not be null");
@@ -147,5 +146,18 @@ public class Coordinate implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+    
+    public edu.stanford.hakan.aim4api.base.Coordinate toAimV4() {
+        edu.stanford.hakan.aim4api.base.Coordinate res = new edu.stanford.hakan.aim4api.base.Coordinate();
+        res.setDimensionIndex(this.getDimensionIndex());
+        res.setPosition(this.getPosition());
+        return res;
+    }
+    
+    public Coordinate(edu.stanford.hakan.aim4api.base.Coordinate v4) {
+        this.setCagridId(0);
+        this.setDimensionIndex(v4.getDimensionIndex());
+        this.setPosition(v4.getPosition());
     }
 }

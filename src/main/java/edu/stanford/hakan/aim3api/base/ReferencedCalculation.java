@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -126,4 +127,14 @@ public class ReferencedCalculation implements IAimXMLOperations {
         }
         return true;
     }
+
+    public edu.stanford.hakan.aim4api.base.CalculationEntityReferencesCalculationEntityStatement toAimV4(Calculation calculation) {
+        edu.stanford.hakan.aim4api.base.CalculationEntityReferencesCalculationEntityStatement res = new edu.stanford.hakan.aim4api.base.CalculationEntityReferencesCalculationEntityStatement();
+        res.setSubjectUniqueIdentifier(Converter.toII(calculation.getUid()));
+        res.setObjectUniqueIdentifier(Converter.toII(this.getUniqueIdentifier()));
+        return res;
+    }
+
+//    public ReferencedCalculation(edu.stanford.hakan.aim4api.base.CalculationEntityReferencesCalculationEntityStatement v4) {
+//    }
 }

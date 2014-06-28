@@ -42,6 +42,9 @@ public class GeometricShapeCollection implements IAimXMLOperations {
 
     private List<GeometricShape> listGeometricShape = new ArrayList<GeometricShape>();
 
+    GeometricShapeCollection() {
+    }
+
     public void AddGeometricShape(GeometricShape newGeometricShape) {
         this.listGeometricShape.add(newGeometricShape);
     }
@@ -98,5 +101,31 @@ public class GeometricShapeCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.MarkupEntityCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.MarkupEntityCollection res = new edu.stanford.hakan.aim4api.base.MarkupEntityCollection();
+        List<GeometricShape> list = this.getGeometricShapeList();
+        for (GeometricShape itemV3 : list) {
+            res.addMarkupEntity(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public GeometricShapeCollection(edu.stanford.hakan.aim4api.base.MarkupEntityCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.MarkupEntity> listV4 = v4.getMarkupEntityList();
+        for (edu.stanford.hakan.aim4api.base.MarkupEntity itemV4 : listV4) {
+            if ("TwoDimensionCircle".equals(itemV4.getXsiType())) {
+                this.AddGeometricShape(new Circle((edu.stanford.hakan.aim4api.base.TwoDimensionCircle) itemV4));
+            } else if ("TwoDimensionEllipse".equals(itemV4.getXsiType())) {
+                this.AddGeometricShape(new Ellipse((edu.stanford.hakan.aim4api.base.TwoDimensionEllipse) itemV4));
+            } else if ("TwoDimensionMultiPoint".equals(itemV4.getXsiType())) {
+                this.AddGeometricShape(new MultiPoint((edu.stanford.hakan.aim4api.base.TwoDimensionMultiPoint) itemV4));
+            } else if ("TwoDimensionPoint".equals(itemV4.getXsiType())) {
+                this.AddGeometricShape(new Point((edu.stanford.hakan.aim4api.base.TwoDimensionPoint) itemV4));
+            } else if ("TwoDimensionPolyline".equals(itemV4.getXsiType())) {
+                this.AddGeometricShape(new Polyline((edu.stanford.hakan.aim4api.base.TwoDimensionPolyline) itemV4));
+            }
+        }
     }
 }

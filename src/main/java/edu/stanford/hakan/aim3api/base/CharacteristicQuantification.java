@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -49,7 +50,7 @@ public class CharacteristicQuantification implements ICharacteristicQuantificati
 
     public String getXsiType() {
         return xsiType;
-    }    
+    }
 
     @Override
     public Double getAnnotatorConfidence() {
@@ -156,5 +157,44 @@ public class CharacteristicQuantification implements ICharacteristicQuantificati
             return false;
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.CharacteristicQuantification toAimV4() {
+        edu.stanford.hakan.aim4api.base.CharacteristicQuantification res = new edu.stanford.hakan.aim4api.base.CharacteristicQuantification();
+        res.setAnnotatorConfidence(this.getAnnotatorConfidence());//
+        res.setLabel(Converter.toST(this.getName()));//
+        return res;
+    }
+
+    public Numerical toNumerical() {
+        return ((Numerical) this);
+    }
+
+    public Interval toInterval() {
+        return ((Interval) this);
+    }
+
+    public Quantile toQuantile() {
+        return ((Quantile) this);
+    }
+
+    public Scale toScale() {
+        return ((Scale) this);
+    }
+
+    public NonQuantifiable toNonQuantifiable() {
+        return ((NonQuantifiable) this);
+    }
+
+    public CharacteristicQuantification(edu.stanford.hakan.aim4api.base.CharacteristicQuantification v4) {
+        this.setCagridId(0);
+        this.setAnnotatorConfidence(v4.getAnnotatorConfidence());
+        if (v4.getLabel() != null) {
+            this.setName(v4.getLabel().getValue());
+        }
+    }
+
+    public CharacteristicQuantification() {
+
     }
 }

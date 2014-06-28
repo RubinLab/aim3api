@@ -74,14 +74,14 @@ public class DICOMImageReference extends ImageReference implements IAimXMLOperat
 
     @Override
     public Node getXMLNode(Document doc) throws AimException {
-        
+
         this.Control();
 
         Element imageReference = (Element) super.getXMLNode(doc);
         Element imageStudy = doc.createElement("imageStudy");
         imageStudy.appendChild(this.ImageStudy.getXMLNode(doc));
         imageReference.appendChild(imageStudy);
-        if (this.getPresentationStateCollection().getPresentationStateList().size() > 0) {
+        if (this.getPresentationStateCollection() != null && this.getPresentationStateCollection().getPresentationStateList().size() > 0) {
             imageReference.appendChild(this.getPresentationStateCollection().getXMLNode(doc));
         }
 
@@ -113,7 +113,7 @@ public class DICOMImageReference extends ImageReference implements IAimXMLOperat
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
 
         this.Control();
-        
+
         Element eDICOMImageReference = (Element) super.getRDFNode(doc, unquieID, Prefix);
         this.presentationStateCollection.appendNodes(doc, unquieID, eDICOMImageReference, Prefix);
 
@@ -126,18 +126,31 @@ public class DICOMImageReference extends ImageReference implements IAimXMLOperat
 
     private void Control() {
     }
-    
-         
+
     @Override
     public boolean isEqualTo(Object other) {
         DICOMImageReference oth = (DICOMImageReference) other;
         if (this.ImageStudy == null ? oth.ImageStudy != null : !this.ImageStudy.isEqualTo(oth.ImageStudy)) {
             return false;
-        }       
-        
+        }
         if (!this.presentationStateCollection.isEqualTo(oth.presentationStateCollection)) {
             return false;
         }
         return super.isEqualTo(other);
+    }
+
+    public edu.stanford.hakan.aim4api.base.ImageReferenceEntity toAimV4() {
+        edu.stanford.hakan.aim4api.base.DicomImageReferenceEntity res = new edu.stanford.hakan.aim4api.base.DicomImageReferenceEntity();
+        res.setImageStudy(this.getImageStudy().toAimV4());
+        return res;
+    }
+
+    public DICOMImageReference(edu.stanford.hakan.aim4api.base.DicomImageReferenceEntity v4) {
+        edu.stanford.hakan.aim4api.base.DicomImageReferenceEntity dicomImageReferenceEntity = (edu.stanford.hakan.aim4api.base.DicomImageReferenceEntity) v4;
+        setXsiType("DICOMImageReference");
+        this.setCagridId(0);
+        if (dicomImageReferenceEntity.getImageStudy() != null) {
+            this.setImageStudy(new ImageStudy(dicomImageReferenceEntity.getImageStudy()));
+        }
     }
 }

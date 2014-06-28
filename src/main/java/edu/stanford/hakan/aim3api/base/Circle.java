@@ -27,6 +27,7 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -58,11 +59,44 @@ public class Circle extends GeometricShape implements IAimXMLOperations {
 
     @Override
     public Node getRDFNode(Document doc,String unquieID,String Prefix) throws AimException {
-        return super.getRDFNode(doc,unquieID,Prefix);
+        return super.getRDFNode(doc, unquieID, Prefix);
     }
-    
+
     @Override
     public boolean isEqualTo(Object other) {
         return super.isEqualTo(other);
+    }
+
+    @Override
+    public edu.stanford.hakan.aim4api.base.TwoDimensionGeometricShapeEntity toAimV4() {
+        edu.stanford.hakan.aim4api.base.TwoDimensionCircle res = new edu.stanford.hakan.aim4api.base.TwoDimensionCircle();
+        res.setIncludeFlag(this.getIncludeFlag());//
+        res.setLineColor(Converter.toST(this.getLineColor()));//
+        res.setLineOpacity(Converter.toST(this.getLineOpacity()));//
+        res.setLineStyle(Converter.toST(this.getLineStyle()));//
+        res.setLineThickness(Converter.toST(this.getLineThickness()));//
+        res.setShapeIdentifier(this.getShapeIdentifier());//
+        res.setTwoDimensionSpatialCoordinateCollection(this.getSpatialCoordinateCollection().toAimV4(res));
+        return res;
+    }
+
+    public Circle(edu.stanford.hakan.aim4api.base.TwoDimensionCircle v4) {
+        setXsiType("Circle");
+        this.setCagridId(0);
+        this.setIncludeFlag(v4.getIncludeFlag());
+        if (v4.getLineColor() != null) {
+            this.setLineColor(v4.getLineColor().getValue());
+        }
+        if (v4.getLineOpacity() != null) {
+            this.setLineOpacity(v4.getLineOpacity().getValue());
+        }
+        if (v4.getLineStyle() != null) {
+            this.setLineStyle(v4.getLineStyle().getValue());
+        }
+        if (v4.getLineThickness() != null) {
+            this.setLineThickness(v4.getLineThickness().getValue());
+        }
+        this.setShapeIdentifier(v4.getShapeIdentifier());
+        this.setSpatialCoordinateCollection(new SpatialCoordinateCollection(v4.getTwoDimensionSpatialCoordinateCollection(), v4));
     }
 }

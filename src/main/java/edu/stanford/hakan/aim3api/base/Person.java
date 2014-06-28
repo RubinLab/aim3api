@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -46,9 +47,11 @@ public class Person implements IAimXMLOperations {
     private String ethnicGroup;
     private String rdfID;
     private boolean dontCreateOwlIntance = false;
-    private boolean dontAddIndexAsPostFixToRdfInstanceName = false;    
-    
-    
+    private boolean dontAddIndexAsPostFixToRdfInstanceName = false;
+
+    public Person() {
+    }
+
     public void setDontAddIndexAsPostFixToRdfInstanceName(boolean dontAddIndexAsPostFixToRdfInstanceName) {
         this.dontAddIndexAsPostFixToRdfInstanceName = dontAddIndexAsPostFixToRdfInstanceName;
     }
@@ -244,5 +247,32 @@ public class Person implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.Person toAimV4() {
+        edu.stanford.hakan.aim4api.base.Person res = new edu.stanford.hakan.aim4api.base.Person();
+        res.setBirthDate(this.getBirthDate());//
+        res.setEthnicGroup(Converter.toST(this.getEthnicGroup()));//
+        res.setId(Converter.toST(this.getId()));//
+        res.setName(Converter.toST(this.getName()));//
+        res.setSex(Converter.toST(this.getSex()));
+        return res;
+    }
+
+    public Person(edu.stanford.hakan.aim4api.base.Person v4) {
+        this.setCagridId(0);
+        this.setBirthDate(v4.getBirthDate());
+        if (v4.getEthnicGroup() != null) {
+            this.setEthnicGroup(v4.getEthnicGroup().getValue());
+        }
+        if (v4.getId() != null) {
+            this.setId(v4.getId().getValue());
+        }
+        if (v4.getName() != null) {
+            this.setName(v4.getName().getValue());
+        }
+        if (v4.getSex() != null) {
+            this.setSex(v4.getSex().getValue());
+        }
     }
 }

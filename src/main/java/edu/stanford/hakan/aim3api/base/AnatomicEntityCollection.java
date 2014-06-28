@@ -41,35 +41,36 @@ import org.w3c.dom.NodeList;
 @SuppressWarnings("serial")
 public class AnatomicEntityCollection implements IAimXMLOperations {
 
- private List<AnatomicEntity> listAnatomicEntity = new ArrayList<AnatomicEntity>();
+    private List<AnatomicEntity> listAnatomicEntity = new ArrayList<AnatomicEntity>();
 
-   
-    public void AddAnatomicEntity(AnatomicEntity newAnatomicEntity)
+    public AnatomicEntityCollection()
     {
+    }
+    
+    public void AddAnatomicEntity(AnatomicEntity newAnatomicEntity) {
         this.listAnatomicEntity.add(newAnatomicEntity);
     }
-    
-    public List<AnatomicEntity> getAnatomicEntityList()
-    {
+
+    public List<AnatomicEntity> getAnatomicEntityList() {
         return this.listAnatomicEntity;
     }
-    
+
     @Override
-    public Node getXMLNode(Document doc) throws AimException {     
-        
-        Element anatomicEntityCollection = doc.createElement("anatomicEntityCollection"); 
+    public Node getXMLNode(Document doc) throws AimException {
+
+        Element anatomicEntityCollection = doc.createElement("anatomicEntityCollection");
         for (int i = 0; i < this.listAnatomicEntity.size(); i++) {
             anatomicEntityCollection.appendChild(this.listAnatomicEntity.get(i).getXMLNode(doc));
         }
-        
+
         return anatomicEntityCollection;
     }
 
     @Override
     public void setXMLNode(Node node) {
-        
+
         this.listAnatomicEntity.clear();
-        
+
         NodeList tempList = node.getChildNodes();
         for (int j = 0; j < tempList.getLength(); j++) {
             if ("AnatomicEntity".equals(tempList.item(j).getNodeName())) {
@@ -81,18 +82,18 @@ public class AnatomicEntityCollection implements IAimXMLOperations {
     }
 
     @Override
-    public Node getRDFNode(Document doc,String unquieID,String Prefix) {
+    public Node getRDFNode(Document doc, String unquieID, String Prefix) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }    
-    
-    public void appendNodes(Document doc, String unquieID, Node parentNode,String Prefix) throws AimException {
+    }
+
+    public void appendNodes(Document doc, String unquieID, Node parentNode, String Prefix) throws AimException {
         for (int i = 0; i < listAnatomicEntity.size(); i++) {
             Element eHas = doc.createElement(Prefix + "hasAnatomicEntity");
-            eHas.appendChild(listAnatomicEntity.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)),Prefix));
+            eHas.appendChild(listAnatomicEntity.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)), Prefix));
             parentNode.appendChild(eHas);
         }
-    }     
-    
+    }
+
     public boolean isEqualTo(Object other) {
         AnatomicEntityCollection oth = (AnatomicEntityCollection) other;
         if (this.listAnatomicEntity.size() != oth.listAnatomicEntity.size()) {
@@ -105,5 +106,21 @@ public class AnatomicEntityCollection implements IAimXMLOperations {
         }
         return true;
     }
-    
+
+    public edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCollection res = new edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCollection();
+        List<edu.stanford.hakan.aim3api.base.AnatomicEntity> list = this.getAnatomicEntityList();
+        for (edu.stanford.hakan.aim3api.base.AnatomicEntity itemV3 : list) {
+            res.addImagingPhysicalEntity(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public AnatomicEntityCollection(edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.ImagingPhysicalEntity> listV4 = v4.getImagingPhysicalEntityList();
+        for (edu.stanford.hakan.aim4api.base.ImagingPhysicalEntity itemV4 : listV4) {
+            this.AddAnatomicEntity(new AnatomicEntity(itemV4));
+        }
+    }
+
 }

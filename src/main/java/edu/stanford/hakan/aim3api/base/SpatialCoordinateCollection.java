@@ -27,11 +27,12 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim4api.base.TwoDimensionGeometricShapeEntity;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -41,6 +42,9 @@ import org.w3c.dom.NodeList;
 public class SpatialCoordinateCollection implements IAimXMLOperations {
 
     private List<SpatialCoordinate> listSpatialCoordinate = new ArrayList<SpatialCoordinate>();
+
+    public SpatialCoordinateCollection() {
+    }
 
     public void AddSpatialCoordinate(SpatialCoordinate newSpatialCoordinate) {
         this.listSpatialCoordinate.add(newSpatialCoordinate);
@@ -108,4 +112,24 @@ public class SpatialCoordinateCollection implements IAimXMLOperations {
         }
         return true;
     }
+
+    public edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinateCollection toAimV4(TwoDimensionGeometricShapeEntity twoDimensionGeometricShapeEntity) {
+        edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinateCollection res = new edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinateCollection();
+        List<SpatialCoordinate> list = this.getSpatialCoordinateList();
+        for (SpatialCoordinate itemV3 : list) {
+            TwoDimensionSpatialCoordinate itemV3Plus = (TwoDimensionSpatialCoordinate) itemV3;
+            res.addTwoDimensionSpatialCoordinate(itemV3Plus.toAimV4(twoDimensionGeometricShapeEntity));
+        }
+        return res;
+    }
+
+    public SpatialCoordinateCollection(edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinateCollection v4, edu.stanford.hakan.aim4api.base.TwoDimensionGeometricShapeEntity geoShapeV4) {
+        List<edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinate> listV4 = v4.getTwoDimensionSpatialCoordinateList();
+        for (edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinate itemV4 : listV4) {
+            itemV4.setTwoDimensionGeometricShapeEntity(geoShapeV4);
+            this.AddSpatialCoordinate(new TwoDimensionSpatialCoordinate(itemV4));
+        }
+    }
+    
+    
 }

@@ -42,6 +42,9 @@ public class ImagingObservationCharacteristicCollection implements IAimXMLOperat
 
     private List<ImagingObservationCharacteristic> listImagingObservationCharacteristic = new ArrayList<ImagingObservationCharacteristic>();
 
+    ImagingObservationCharacteristicCollection() {
+    }
+
     public void AddImagingObservationCharacteristic(ImagingObservationCharacteristic newImagingObservationCharacteristic) {
         this.listImagingObservationCharacteristic.add(newImagingObservationCharacteristic);
     }
@@ -99,5 +102,21 @@ public class ImagingObservationCharacteristicCollection implements IAimXMLOperat
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.ImagingObservationCharacteristicCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImagingObservationCharacteristicCollection res = new edu.stanford.hakan.aim4api.base.ImagingObservationCharacteristicCollection();
+        List<ImagingObservationCharacteristic> list = this.getImagingObservationCharacteristicList();
+        for (ImagingObservationCharacteristic itemV3 : list) {
+            res.addImagingObservationCharacteristic(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public ImagingObservationCharacteristicCollection(edu.stanford.hakan.aim4api.base.ImagingObservationCharacteristicCollection v4) {
+       List<edu.stanford.hakan.aim4api.base.ImagingObservationCharacteristic> listV4 = v4.getImagingObservationCharacteristicList();
+        for (edu.stanford.hakan.aim4api.base.ImagingObservationCharacteristic itemV4 : listV4) {
+            this.AddImagingObservationCharacteristic(new ImagingObservationCharacteristic(itemV4));
+        }
     }
 }

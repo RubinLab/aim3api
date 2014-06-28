@@ -42,6 +42,9 @@ public class ImagingObservationCollection implements IAimXMLOperations {
 
     private List<ImagingObservation> listImagingObservation = new ArrayList<ImagingObservation>();
 
+    ImagingObservationCollection() {
+    }
+
     public void AddImagingObservation(ImagingObservation newImagingObservation) {
         this.listImagingObservation.add(newImagingObservation);
     }
@@ -88,7 +91,7 @@ public class ImagingObservationCollection implements IAimXMLOperations {
             parentNode.appendChild(eHas);
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         ImagingObservationCollection oth = (ImagingObservationCollection) other;
         if (this.listImagingObservation.size() != oth.listImagingObservation.size()) {
@@ -100,5 +103,21 @@ public class ImagingObservationCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.ImagingObservationEntityCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImagingObservationEntityCollection res = new edu.stanford.hakan.aim4api.base.ImagingObservationEntityCollection();
+        List<ImagingObservation> list = this.getImagingObservationList();
+        for (ImagingObservation itemV3 : list) {
+            res.addImagingObservationEntity(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public ImagingObservationCollection(edu.stanford.hakan.aim4api.base.ImagingObservationEntityCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.ImagingObservationEntity> listV4 = v4.getImagingObservationEntityList();
+        for (edu.stanford.hakan.aim4api.base.ImagingObservationEntity itemV4 : listV4) {
+            this.AddImagingObservation(new ImagingObservation(itemV4));
+        }
     }
 }

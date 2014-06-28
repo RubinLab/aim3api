@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim4api.base.CD;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -155,9 +156,9 @@ public class Inference implements IAimXMLOperations {
 
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
-        
+
         this.Control();
-        
+
         Element eInference = doc.createElement(Prefix + "Inference");
         eInference.setAttribute("rdf:ID", "Inference_".concat(unquieID));
 
@@ -221,8 +222,7 @@ public class Inference implements IAimXMLOperations {
             throw new AimException("AimException: Inference's imageEvidence can not be null");
         }
     }
-    
-    
+
     public boolean isEqualTo(Object other) {
         Inference oth = (Inference) other;
         if (this.cagridId != oth.cagridId) {
@@ -247,5 +247,40 @@ public class Inference implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.InferenceEntity toAimV4() {
+        edu.stanford.hakan.aim4api.base.InferenceEntity res = new edu.stanford.hakan.aim4api.base.InferenceEntity();
+        res.setAnnotatorConfidence(this.getAnnotatorConfidence());//
+        CD typeCode = new CD();//
+        typeCode.setCode(this.getCodeValue());//
+        typeCode.setCodeSystem(this.getCodeMeaning());//
+        typeCode.setCodeSystemName(this.getCodingSchemeDesignator());//
+        typeCode.setCodeSystemVersion(this.getCodingSchemeVersion());//
+        res.addTypeCode(typeCode);//
+        res.setImageEvidence(this.getImageEvidence());//
+        return res;
+
+    }
+
+    public Inference(edu.stanford.hakan.aim4api.base.InferenceEntity v4) {
+        this.setCagridId(0);
+        if (v4.getListTypeCode().size() > 0) {
+            CD typeCode = v4.getListTypeCode().get(0);
+            if (typeCode.getCode() != null) {
+                this.setCodeValue(typeCode.getCode());
+            }
+            if (typeCode.getCodeSystem() != null) {
+                this.setCodeMeaning(typeCode.getCodeSystem());
+            }
+            if (typeCode.getCodeSystemName() != null) {
+                this.setCodingSchemeDesignator(typeCode.getCodeSystemName());
+            }
+            if (typeCode.getCodeSystemVersion() != null) {
+                this.setCodingSchemeVersion(typeCode.getCodeSystemVersion());
+            }
+        }
+        this.setAnnotatorConfidence(v4.getAnnotatorConfidence());
+        this.setImageEvidence(v4.getImageEvidence());
     }
 }

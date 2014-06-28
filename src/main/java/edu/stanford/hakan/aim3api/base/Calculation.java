@@ -27,10 +27,15 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim4api.base.Algorithm;
+import edu.stanford.hakan.aim4api.base.CD;
+import edu.stanford.hakan.aim3api.utility.Converter;
+import edu.stanford.hakan.aim4api.base.AnnotationStatement;
+import java.util.List;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -49,16 +54,13 @@ public class Calculation implements IAimXMLOperations {
     private String codingSchemeVersion;
     private String algorithmName;
     private String algorithmVersion;
-    private CalculationResultCollection calculationResultCollection;
-    private ReferencedCalculationCollection referencedCalculationCollection;
-    private ReferencedGeometricShapeCollection referencedGeometricShapeCollection;
+    private CalculationResultCollection calculationResultCollection = new CalculationResultCollection();
+    private ReferencedCalculationCollection referencedCalculationCollection = new ReferencedCalculationCollection();
+    private ReferencedGeometricShapeCollection referencedGeometricShapeCollection = new ReferencedGeometricShapeCollection();
     private String rdfID;
     private boolean codeValueCanBeNull;
 
     public Calculation() {
-        this.calculationResultCollection = new CalculationResultCollection();
-        this.referencedCalculationCollection = new ReferencedCalculationCollection();
-        this.referencedGeometricShapeCollection = new ReferencedGeometricShapeCollection();
         this.codeValueCanBeNull = false;
     }
 
@@ -74,10 +76,6 @@ public class Calculation implements IAimXMLOperations {
         this.algorithmName = algorithmName;
         this.algorithmVersion = algorithmVersion;
         this.codeValueCanBeNull = false;
-
-        this.calculationResultCollection = new CalculationResultCollection();
-        this.referencedCalculationCollection = new ReferencedCalculationCollection();
-        this.referencedGeometricShapeCollection = new ReferencedGeometricShapeCollection();
     }
 
     public String getAlgorithmName() {
@@ -356,13 +354,11 @@ public class Calculation implements IAimXMLOperations {
             eCalculation.appendChild(eAlgorithmVersion);
         }
 
-
         this.referencedCalculationCollection.appendNodes(doc, unquieID, eCalculation, Prefix);
         this.calculationResultCollection.appendNodes(doc, unquieID, eCalculation, Prefix);
         this.referencedGeometricShapeCollection.appendNodes(doc, unquieID, eCalculation, Prefix);
 
         return eCalculation;
-
 
     }
 
@@ -430,5 +426,93 @@ public class Calculation implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.CalculationEntity toAimV4(edu.stanford.hakan.aim4api.base.ImageAnnotation imageAnnotation) {
+        edu.stanford.hakan.aim4api.base.CalculationEntity res = new edu.stanford.hakan.aim4api.base.CalculationEntity();
+        res.setUniqueIdentifier();
+        Algorithm algorithm = new Algorithm();
+        algorithm.setName(Converter.toST(this.getAlgorithmName()));
+        algorithm.setVersion(Converter.toST(this.getAlgorithmVersion()));
+        algorithm.addType(new CD("", "", "", ""));
+        res.setAlgorithm(algorithm);
+        res.setCalculationResultCollection(this.getCalculationResultCollection().toAimV4());//
+        res.setDescription(Converter.toST(this.getDescription()));//
+        res.setMathML(Converter.toST(this.getMathML()));//
+        CD typeCode = new CD();
+        typeCode.setCode(this.getCodeValue());
+        typeCode.setCodeSystem(this.getCodeMeaning());
+        typeCode.setCodeSystemName(this.getCodingSchemeDesignator());
+        typeCode.setCodeSystemVersion(this.getCodingSchemeVersion());//
+        res.addTypeCode(typeCode);
+
+        if (this.getReferencedCalculationCollection().getReferencedCalculationList().size() > 0) {
+            for (edu.stanford.hakan.aim3api.base.ReferencedCalculation itemV3 : this.getReferencedCalculationCollection().getReferencedCalculationList()) {
+                edu.stanford.hakan.aim4api.base.CalculationEntityReferencesCalculationEntityStatement annotationStatement = itemV3.toAimV4(this);
+                imageAnnotation.addImageAnnotationStatement(annotationStatement);
+            }
+        }
+        if (this.getReferencedGeometricShapeCollection().getReferencedGeometricShapeList().size() > 0) {
+            for (edu.stanford.hakan.aim3api.base.ReferencedGeometricShape itemV3 : this.getReferencedGeometricShapeCollection().getReferencedGeometricShapeList()) {
+                itemV3.toAimV4(imageAnnotation, res.getUniqueIdentifier());
+            }
+        }
+        return res;
+    }
+
+    public Calculation(edu.stanford.hakan.aim4api.base.CalculationEntity v4, edu.stanford.hakan.aim4api.base.ImageAnnotation ia) {
+        this.setCagridId(0);
+        this.setUid(v4.getUniqueIdentifier().getRoot());
+        if (v4.getAlgorithm() != null) {
+            this.setAlgorithmName(v4.getAlgorithm().getName().getValue());
+            this.setAlgorithmVersion(v4.getAlgorithm().getVersion().getValue());
+        }
+        if (v4.getCalculationResultCollection().getExtendedCalculationResultList().size() > 0) {
+            this.setCalculationResultCollection(new CalculationResultCollection(v4.getCalculationResultCollection()));
+        }
+        if (v4.getDescription() != null) {
+            this.setDescription(v4.getDescription().getValue());
+        }
+        if (v4.getMathML() != null) {
+            this.setMathML(v4.getMathML().getValue());
+        }
+        if (v4.getListTypeCode().size() > 0) {
+            CD typeCode = v4.getListTypeCode().get(0);
+            if (typeCode.getCode() != null) {
+                this.setCodeValue(typeCode.getCode());
+            }
+            if (typeCode.getCodeSystem() != null) {
+                this.setCodeMeaning(typeCode.getCodeSystem());
+            }
+            if (typeCode.getCodeSystemName() != null) {
+                this.setCodingSchemeDesignator(typeCode.getCodeSystemName());
+            }
+            if (typeCode.getCodeSystemVersion() != null) {
+                this.setCodingSchemeVersion(typeCode.getCodeSystemVersion());
+            }
+        }
+
+        List<AnnotationStatement> listAnnotationStatement = ia.getImageAnnotationStatementCollection().getImageAnnotationStatementList();
+        String annotationStatementID = "";
+        for (int i = 0; i < listAnnotationStatement.size(); i++) {
+            AnnotationStatement annotationStatement = listAnnotationStatement.get(i);
+            if ("ImagingPhysicalEntityHasCalculationEntityStatement".equals(annotationStatement.getXsiType())) {
+                if (v4.getUniqueIdentifier().getRoot().equals(annotationStatement.getSubjectUniqueIdentifier().getRoot())) {
+                    annotationStatementID = annotationStatement.getObjectUniqueIdentifier().getRoot();
+                }
+            }
+        }
+        String referencedShapeIdentifier = "";
+        for (int i = 0; i < listAnnotationStatement.size(); i++) {
+            AnnotationStatement annotationStatement = listAnnotationStatement.get(i);
+            if ("ImagingPhysicalEntityHasTwoDimensionGeometricShapeEntityStatement".equals(annotationStatement.getXsiType())) {
+                if (annotationStatementID.equals(annotationStatement.getObjectUniqueIdentifier().getRoot())) {
+                    referencedShapeIdentifier = annotationStatement.getSubjectUniqueIdentifier().getRoot();
+                }
+            }
+        }
+        if (!"".equals(referencedShapeIdentifier)) {
+            this.addReferencedGeometricShape(new ReferencedGeometricShape(0, Integer.parseInt(referencedShapeIdentifier)));
+        }
     }
 }

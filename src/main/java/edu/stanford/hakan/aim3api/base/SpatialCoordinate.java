@@ -130,4 +130,6 @@ public class SpatialCoordinate implements ISpatialCoordinate, IAimXMLOperations 
         }
         return true;
     }
+    
+
 }

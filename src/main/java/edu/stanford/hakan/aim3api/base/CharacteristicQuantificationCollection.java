@@ -43,6 +43,9 @@ public class CharacteristicQuantificationCollection implements IAimXMLOperations
 
     private List<CharacteristicQuantification> listCharacteristicQuantification = new ArrayList<CharacteristicQuantification>();
 
+    public CharacteristicQuantificationCollection() {
+    }
+
     public void AddCharacteristicQuantification(CharacteristicQuantification newCharacteristicQuantification) {
         this.listCharacteristicQuantification.add(newCharacteristicQuantification);
     }
@@ -121,5 +124,31 @@ public class CharacteristicQuantificationCollection implements IAimXMLOperations
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.CharacteristicQuantificationCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.CharacteristicQuantificationCollection res = new edu.stanford.hakan.aim4api.base.CharacteristicQuantificationCollection();
+        List<edu.stanford.hakan.aim3api.base.CharacteristicQuantification> list = this.getCharacteristicQuantificationList();
+        for (edu.stanford.hakan.aim3api.base.CharacteristicQuantification itemV3 : list) {
+            res.addCharacteristicQuantification(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public CharacteristicQuantificationCollection(edu.stanford.hakan.aim4api.base.CharacteristicQuantificationCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.CharacteristicQuantification> listV4 = v4.getCharacteristicQuantificationList();
+        for (edu.stanford.hakan.aim4api.base.CharacteristicQuantification itemV4 : listV4) {
+            if ("Interval".equals(itemV4.getXsiType())) {
+                this.AddCharacteristicQuantification(new Interval((edu.stanford.hakan.aim4api.base.Interval) itemV4));
+            } else if ("NonQuantifiable".equals(itemV4.getXsiType())) {
+                this.AddCharacteristicQuantification(new NonQuantifiable((edu.stanford.hakan.aim4api.base.NonQuantifiable) itemV4));
+            } else if ("Numerical".equals(itemV4.getXsiType())) {
+                this.AddCharacteristicQuantification(new Numerical((edu.stanford.hakan.aim4api.base.Numerical) itemV4));
+            } else if ("Quantile".equals(itemV4.getXsiType())) {
+                this.AddCharacteristicQuantification(new Quantile((edu.stanford.hakan.aim4api.base.Quantile) itemV4));
+            } else if ("Scale".equals(itemV4.getXsiType())) {
+                this.AddCharacteristicQuantification(new Scale((edu.stanford.hakan.aim4api.base.Scale) itemV4));
+            }
+        }
     }
 }

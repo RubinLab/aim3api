@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -39,16 +40,14 @@ import org.w3c.dom.NodeList;
  */
 public class CalculationData implements IAimXMLOperations {
 
-    private CoordinateCollection coordinateCollection;
+    private CoordinateCollection coordinateCollection = new CoordinateCollection();
     private Integer cagridId;
     private Double value;
 
     public CalculationData() {
-        this.coordinateCollection = new CoordinateCollection();
     }
 
     public CalculationData(Integer cagridId, Double value) {
-        this.coordinateCollection = new CoordinateCollection();
         this.cagridId = cagridId;
         this.value = value;
     }
@@ -95,7 +94,6 @@ public class CalculationData implements IAimXMLOperations {
         }
         return calculationData;
 
-
     }
 
     @Override
@@ -133,7 +131,6 @@ public class CalculationData implements IAimXMLOperations {
 
         return eCalculationData;
 
-
     }
 
     private void Control() throws AimException {
@@ -145,7 +142,7 @@ public class CalculationData implements IAimXMLOperations {
             throw new AimException("AimException: CalculationData's value can not be null");
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         CalculationData oth = (CalculationData) other;
         if (this.cagridId != oth.cagridId) {
@@ -155,5 +152,22 @@ public class CalculationData implements IAimXMLOperations {
             return false;
         }
         return this.coordinateCollection.isEqualTo(oth.coordinateCollection);
+    }
+
+    public edu.stanford.hakan.aim4api.base.CalculationData toAimV4() {
+        edu.stanford.hakan.aim4api.base.CalculationData res = new edu.stanford.hakan.aim4api.base.CalculationData();
+        res.setCoordinateCollection(this.getCoordinateCollection().toAimV4());
+        res.setValue(Converter.toST(this.getValue()));
+        return res;
+    }
+
+    public CalculationData(edu.stanford.hakan.aim4api.base.CalculationData v4) {
+        this.setCagridId(0);
+        if (v4.getCoordinateCollection().getCoordinateList().size() > 0) {
+            this.setCoordinateCollection(new CoordinateCollection(v4.getCoordinateCollection()));
+        }
+        if (v4.getValue() != null) {
+            this.setValue(Double.parseDouble(v4.getValue().getValue()));
+        }
     }
 }

@@ -42,6 +42,9 @@ public class CoordinateCollection implements IAimXMLOperations {
 
     private List<Coordinate> listCoordinate = new ArrayList<Coordinate>();
 
+    CoordinateCollection() {
+    }
+
     public void AddCoordinate(Coordinate newCoordinate) {
         this.listCoordinate.add(newCoordinate);
     }
@@ -99,5 +102,21 @@ public class CoordinateCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.CoordinateCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.CoordinateCollection res = new edu.stanford.hakan.aim4api.base.CoordinateCollection();
+        List<edu.stanford.hakan.aim3api.base.Coordinate> list = this.getCoordinateList();
+        for (edu.stanford.hakan.aim3api.base.Coordinate itemV3 : list) {
+            res.addCoordinate(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public CoordinateCollection(edu.stanford.hakan.aim4api.base.CoordinateCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.Coordinate> listV4 = v4.getCoordinateList();
+        for (edu.stanford.hakan.aim4api.base.Coordinate itemV4 : listV4) {
+            this.AddCoordinate(new Coordinate(itemV4));
+        }
     }
 }

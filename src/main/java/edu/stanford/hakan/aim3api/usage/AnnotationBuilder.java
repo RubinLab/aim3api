@@ -94,8 +94,11 @@ public class AnnotationBuilder {
             root.setAttribute("xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
             doc.appendChild(root);
             //*** Validation doc
-            boolean valRes = AnnotationValidator.ValidateXML(doc, PathXSD);
-            setAimXMLsaveResult(AnnotationValidator.getValidationResult());
+            boolean valRes = true;
+            if (PathXSD != null) {
+                AnnotationValidator.ValidateXML(doc, PathXSD);
+                setAimXMLsaveResult(AnnotationValidator.getValidationResult());
+            }
             //*** Validation End
             if (valRes) {
                 SaveDocucument(doc, PathXML);

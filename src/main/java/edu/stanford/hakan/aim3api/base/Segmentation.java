@@ -27,12 +27,13 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -123,7 +124,6 @@ public class Segmentation implements IAimXMLOperations {
         segmentation.setAttribute("referencedSopInstanceUID", this.referencedSopInstanceUID);
         segmentation.setAttribute("segmentNumber", this.segmentNumber.toString());
 
-
         Element imagingObservation = doc.createElement("imagingObservation");
         for (int i = 0; i < this.listImagingObservation.size(); i++) {
             imagingObservation.appendChild(this.listImagingObservation.get(i).getXMLNode(doc));
@@ -163,9 +163,9 @@ public class Segmentation implements IAimXMLOperations {
 
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
-        
+
         this.Control();
-        
+
         Element eSegmentation = doc.createElement(Prefix + "Segmentation");
         eSegmentation.setAttribute("rdf:ID", "Segmentation_".concat(unquieID));
 
@@ -220,8 +220,7 @@ public class Segmentation implements IAimXMLOperations {
             throw new AimException("AimException: Segmentation's segmentNumber can not be null");
         }
     }
-    
-        
+
     public boolean isEqualTo(Object other) {
         Segmentation oth = (Segmentation) other;
         if (this.cagridId != oth.cagridId) {
@@ -238,7 +237,7 @@ public class Segmentation implements IAimXMLOperations {
         }
         if (this.segmentNumber == null ? oth.segmentNumber != null : !this.segmentNumber.equals(oth.segmentNumber)) {
             return false;
-        }        
+        }
         if (this.listImagingObservation.size() != oth.listImagingObservation.size()) {
             return false;
         }
@@ -248,5 +247,28 @@ public class Segmentation implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.SegmentationEntity toAimV4() {
+        edu.stanford.hakan.aim4api.base.DicomSegmentationEntity res = new edu.stanford.hakan.aim4api.base.DicomSegmentationEntity();
+        res.setReferencedSopInstanceUid(Converter.toII(this.getReferencedSopInstanceUID()));//
+        res.setSegmentNumber(this.getSegmentNumber());//
+        res.setSopClassUid(Converter.toII(this.getSopClassUID()));
+        res.setSopInstanceUid(Converter.toII(this.getSopInstanceUID()));
+        return res;
+    }
+
+    public Segmentation(edu.stanford.hakan.aim4api.base.DicomSegmentationEntity v4) {
+        this.setCagridId(0);
+        if (v4.getReferencedSopInstanceUid() != null) {
+            this.setReferencedSopInstanceUID(v4.getReferencedSopInstanceUid().getRoot());
+        }
+        this.setSegmentNumber(v4.getSegmentNumber());
+        if (v4.getSopClassUid() != null) {
+            this.setSopClassUID(v4.getSopClassUid().getRoot());
+        }
+        if (v4.getSopInstanceUid() != null) {
+            this.setSopInstanceUID(v4.getSopInstanceUid().getRoot());
+        }
     }
 }

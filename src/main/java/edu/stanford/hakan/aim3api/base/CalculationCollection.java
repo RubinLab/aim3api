@@ -42,6 +42,9 @@ public class CalculationCollection implements IAimXMLOperations {
 
     private List<Calculation> listCalculation = new ArrayList<Calculation>();
 
+    CalculationCollection() {
+    }
+
     public void AddCalculation(Calculation newCalculation) {
         this.listCalculation.add(newCalculation);
     }
@@ -76,18 +79,18 @@ public class CalculationCollection implements IAimXMLOperations {
     }
 
     @Override
-    public Node getRDFNode(Document doc, String unquieID,String Prefix) {
+    public Node getRDFNode(Document doc, String unquieID, String Prefix) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void appendNodes(Document doc, String unquieID, Node parentNode,String Prefix) throws AimException {
+    public void appendNodes(Document doc, String unquieID, Node parentNode, String Prefix) throws AimException {
         for (int i = 0; i < listCalculation.size(); i++) {
             Element eHas = doc.createElement(Prefix + "hasCalculation");
-            eHas.appendChild(listCalculation.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)),Prefix));
+            eHas.appendChild(listCalculation.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)), Prefix));
             parentNode.appendChild(eHas);
         }
-    }  
-    
+    }
+
     public boolean isEqualTo(Object other) {
         CalculationCollection oth = (CalculationCollection) other;
         if (this.listCalculation.size() != oth.listCalculation.size()) {
@@ -99,5 +102,21 @@ public class CalculationCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.CalculationEntityCollection toAimV4(edu.stanford.hakan.aim4api.base.ImageAnnotation imageAnnotation) {
+        edu.stanford.hakan.aim4api.base.CalculationEntityCollection res = new edu.stanford.hakan.aim4api.base.CalculationEntityCollection();
+        List<edu.stanford.hakan.aim3api.base.Calculation> list = this.getCalculationList();
+        for (edu.stanford.hakan.aim3api.base.Calculation itemV3 : list) {
+            res.addCalculationEntity(itemV3.toAimV4(imageAnnotation));
+        }
+        return res;
+    }
+
+    public CalculationCollection(edu.stanford.hakan.aim4api.base.CalculationEntityCollection v4, edu.stanford.hakan.aim4api.base.ImageAnnotation ia) {
+        List<edu.stanford.hakan.aim4api.base.CalculationEntity> listV4 = v4.getCalculationEntityList();
+        for (edu.stanford.hakan.aim4api.base.CalculationEntity itemV4 : listV4) {
+            this.AddCalculation(new Calculation(itemV4, ia));
+        }
     }
 }

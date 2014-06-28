@@ -42,6 +42,9 @@ public class SegmentationCollection implements IAimXMLOperations {
 
     private List<Segmentation> listSegmentation = new ArrayList<Segmentation>();
 
+    public SegmentationCollection() {
+    }
+
     public void AddSegmentation(Segmentation newSegmentation) {
         this.listSegmentation.add(newSegmentation);
     }
@@ -87,8 +90,7 @@ public class SegmentationCollection implements IAimXMLOperations {
             parentNode.appendChild(eHas);
         }
     }
-    
-        
+
     public boolean isEqualTo(Object other) {
         SegmentationCollection oth = (SegmentationCollection) other;
         if (this.listSegmentation.size() != oth.listSegmentation.size()) {
@@ -100,5 +102,21 @@ public class SegmentationCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.SegmentationEntityCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.SegmentationEntityCollection res = new edu.stanford.hakan.aim4api.base.SegmentationEntityCollection();
+        List<Segmentation> list = this.getSegmentationList();
+        for (Segmentation itemV3 : list) {
+            res.addSegmentationEntity(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public SegmentationCollection(edu.stanford.hakan.aim4api.base.SegmentationEntityCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.SegmentationEntity> listV4 = v4.getSegmentationEntityList();
+        for (edu.stanford.hakan.aim4api.base.SegmentationEntity itemV4 : listV4) {
+            this.AddSegmentation(new Segmentation((edu.stanford.hakan.aim4api.base.DicomSegmentationEntity)itemV4));
+        }
     }
 }

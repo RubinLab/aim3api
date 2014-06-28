@@ -27,10 +27,14 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
+import edu.stanford.hakan.aim4api.base.II;
+import edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityHasCalculationEntityStatement;
+import edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityHasTwoDimensionGeometricShapeEntityStatement;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -123,4 +127,21 @@ public class ReferencedGeometricShape implements IAimXMLOperations {
         }
         return true;
     }
+
+    public void toAimV4(edu.stanford.hakan.aim4api.base.ImageAnnotation imageAnnotation, II calculationUniqueIdentifier) {
+        String uid = edu.stanford.hakan.aim3api.utility.GenerateId.getUUID();
+        ImagingPhysicalEntityHasTwoDimensionGeometricShapeEntityStatement connectGeoShapeWithImagingPhysicalEntity = new ImagingPhysicalEntityHasTwoDimensionGeometricShapeEntityStatement();
+        connectGeoShapeWithImagingPhysicalEntity.setSubjectUniqueIdentifier(Converter.toII(this.getReferencedShapeIdentifier()));
+        connectGeoShapeWithImagingPhysicalEntity.setObjectUniqueIdentifier(Converter.toII(uid));
+        imageAnnotation.addImageAnnotationStatement(connectGeoShapeWithImagingPhysicalEntity);
+
+        ImagingPhysicalEntityHasCalculationEntityStatement connectCalculationWithImagingPhysicalEntity = new ImagingPhysicalEntityHasCalculationEntityStatement();
+        connectCalculationWithImagingPhysicalEntity.setSubjectUniqueIdentifier(Converter.toII(calculationUniqueIdentifier.getRoot()));
+        connectCalculationWithImagingPhysicalEntity.setObjectUniqueIdentifier(Converter.toII(uid));
+        imageAnnotation.addImageAnnotationStatement(connectCalculationWithImagingPhysicalEntity);
+    }
+
+//    public ReferencedGeometricShape(ImagingPhysicalEntityHasTwoDimensionGeometricShapeEntityStatement v4_1, ImagingPhysicalEntityHasCalculationEntityStatement v4_2) {
+//
+//    }
 }

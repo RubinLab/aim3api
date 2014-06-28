@@ -27,6 +27,7 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -118,9 +119,9 @@ public class Equipment implements IAimXMLOperations {
 
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
-        
+
         this.Control();
-        
+
         Element eEquipment = doc.createElement(Prefix + "Equipment");
         eEquipment.setAttribute("rdf:ID", "Equipment_".concat(unquieID));
 
@@ -159,7 +160,7 @@ public class Equipment implements IAimXMLOperations {
             throw new AimException("AimException: Equipment's manufacturerName can not be null");
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         Equipment oth = (Equipment) other;
         if (this.cagridId != oth.cagridId) {
@@ -175,5 +176,26 @@ public class Equipment implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.Equipment toAimV4() {
+        edu.stanford.hakan.aim4api.base.Equipment res = new edu.stanford.hakan.aim4api.base.Equipment();
+        res.setManufacturerModelName(Converter.toST(this.getManufacturerModelName()));
+        res.setManufacturerName(Converter.toST(this.getManufacturerName()));
+        res.setSoftwareVersion(Converter.toST(this.getSoftwareVersion()));
+        return res;
+    }
+
+    public Equipment(edu.stanford.hakan.aim4api.base.Equipment v4) {
+        this.setCagridId(0);
+        if (v4.getManufacturerModelName() != null) {
+            this.setManufacturerModelName(v4.getManufacturerModelName().getValue());
+        }
+        if (v4.getManufacturerName() != null) {
+            this.setManufacturerName(v4.getManufacturerName().getValue());
+        }
+        if (v4.getSoftwareVersion() != null) {
+            this.setSoftwareVersion(v4.getSoftwareVersion().getValue());
+        }
     }
 }

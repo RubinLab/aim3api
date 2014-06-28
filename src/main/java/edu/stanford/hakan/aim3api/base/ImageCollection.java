@@ -42,6 +42,9 @@ public class ImageCollection implements IAimXMLOperations {
 
     private List<Image> listImage = new ArrayList<Image>();
 
+    ImageCollection() {
+    }
+
     public void AddImage(Image newImage) {
         this.listImage.add(newImage);
     }
@@ -100,5 +103,21 @@ public class ImageCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.ImageCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImageCollection res = new edu.stanford.hakan.aim4api.base.ImageCollection();
+        List<Image> list = this.getImageList();
+        for (Image itemV3 : list) {
+            res.addImage(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public ImageCollection(edu.stanford.hakan.aim4api.base.ImageCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.Image> listV4 = v4.getImageList();
+        for (edu.stanford.hakan.aim4api.base.Image itemV4 : listV4) {
+            this.AddImage(new Image(itemV4));
+        }
     }
 }

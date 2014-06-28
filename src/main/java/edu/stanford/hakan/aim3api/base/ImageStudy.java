@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -141,9 +142,9 @@ public class ImageStudy implements IAimXMLOperations {
 
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
-       
+
         this.Control();
-        
+
         Element eImageStudy = doc.createElement(Prefix + "ImageStudy");
         eImageStudy.setAttribute("rdf:ID", "ImageStudy_".concat(unquieID));
 
@@ -175,7 +176,6 @@ public class ImageStudy implements IAimXMLOperations {
 
         return eImageStudy;
 
-
     }
 
     private void Control() throws AimException {
@@ -192,7 +192,7 @@ public class ImageStudy implements IAimXMLOperations {
             throw new AimException("AimException: ImageStudy's startTime can not be null");
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         ImageStudy oth = (ImageStudy) other;
         if (this.cagridId != oth.cagridId) {
@@ -209,4 +209,26 @@ public class ImageStudy implements IAimXMLOperations {
         }
         return this.imageSeries.isEqualTo(oth.imageSeries);
     }
+
+    public edu.stanford.hakan.aim4api.base.ImageStudy toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImageStudy res = new edu.stanford.hakan.aim4api.base.ImageStudy();
+        res.setImageSeries(this.getImageSeries().toAimV4());
+        res.setInstanceUid(Converter.toII(this.getInstanceUID()));
+        res.setStartDate(this.getStartDate());
+        res.setStartTime(this.getStartTime());
+        return res;
+    }
+
+    public ImageStudy(edu.stanford.hakan.aim4api.base.ImageStudy v4) {
+        this.setCagridId(0);
+        if (v4.getImageSeries() != null) {
+            this.setImageSeries(new ImageSeries(v4.getImageSeries()));
+        }
+        if (v4.getInstanceUid() != null) {
+            this.setInstanceUID(v4.getInstanceUid().getRoot());
+        }
+        this.setStartDate(v4.getStartDate());
+        this.setStartTime(v4.getStartTime());
+    }
+
 }

@@ -39,32 +39,33 @@ import org.w3c.dom.NodeList;
  *
  * @author Hakan BULU
  */
-public class ImageReferenceCollection  implements IAimXMLOperations  {
-    
+public class ImageReferenceCollection implements IAimXMLOperations {
+
     private List<ImageReference> listImageReference = new ArrayList<ImageReference>();
-   
-    public void AddImageReference(ImageReference newImageReference)
-    {
+
+    ImageReferenceCollection() {
+    }
+
+    public void AddImageReference(ImageReference newImageReference) {
         this.listImageReference.add(newImageReference);
     }
-    
-    public List<ImageReference> getImageReferenceList()
-    {
+
+    public List<ImageReference> getImageReferenceList() {
         return this.listImageReference;
     }
-    
+
     @Override
-    public Node getXMLNode(Document doc) throws AimException {     
-        
-        Element imageReferenceCollection = doc.createElement("imageReferenceCollection"); 
+    public Node getXMLNode(Document doc) throws AimException {
+
+        Element imageReferenceCollection = doc.createElement("imageReferenceCollection");
         for (int i = 0; i < this.listImageReference.size(); i++) {
             imageReferenceCollection.appendChild(this.listImageReference.get(i).getXMLNode(doc));
-        }        
+        }
         return imageReferenceCollection;
     }
 
     @Override
-    public void setXMLNode(Node node) {        
+    public void setXMLNode(Node node) {
 
         this.listImageReference.clear();
 
@@ -86,13 +87,12 @@ public class ImageReferenceCollection  implements IAimXMLOperations  {
     }
 
     @Override
-    public Node getRDFNode(Document doc,String unquieID,String Prefix) {
+    public Node getRDFNode(Document doc, String unquieID, String Prefix) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-        
-    public void appendNodes(Document doc, String unquieID, Node parentNode,String Prefix) throws AimException {
-                
+
+    public void appendNodes(Document doc, String unquieID, Node parentNode, String Prefix) throws AimException {
+
         for (int i = 0; i < listImageReference.size(); i++) {
             Element eHas = doc.createElement(Prefix + "hasImageReference");
             ImageReference imageReference = listImageReference.get(i);
@@ -105,14 +105,14 @@ public class ImageReferenceCollection  implements IAimXMLOperations  {
             if (imageReference.isDontCreateOwlIntance()) {
                 eHas.setAttribute("rdf:resource", "#".concat(imageReference.getRdfID()));
             } else if (imageReference.getRdfID() != null) {
-                eHas.appendChild(imageReference.getRDFNode(doc, imageReference.getRdfID().concat(postFix),Prefix));
+                eHas.appendChild(imageReference.getRDFNode(doc, imageReference.getRdfID().concat(postFix), Prefix));
             } else {
-                eHas.appendChild(imageReference.getRDFNode(doc, unquieID.concat(postFix),Prefix));
+                eHas.appendChild(imageReference.getRDFNode(doc, unquieID.concat(postFix), Prefix));
             }
             parentNode.appendChild(eHas);
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         ImageReferenceCollection oth = (ImageReferenceCollection) other;
         if (this.listImageReference.size() != oth.listImageReference.size()) {
@@ -124,5 +124,24 @@ public class ImageReferenceCollection  implements IAimXMLOperations  {
             }
         }
         return true;
-    }    
+    }
+
+    public edu.stanford.hakan.aim4api.base.ImageReferenceEntityCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImageReferenceEntityCollection res = new edu.stanford.hakan.aim4api.base.ImageReferenceEntityCollection();
+        List<ImageReference> list = this.getImageReferenceList();
+        for (ImageReference itemV3 : list) {
+            DICOMImageReference itemV3Plus = (DICOMImageReference) itemV3;
+            res.addImageReferenceEntity(itemV3Plus.toAimV4());
+        }
+        return res;
+    }
+
+    public ImageReferenceCollection(edu.stanford.hakan.aim4api.base.ImageReferenceEntityCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.ImageReferenceEntity> listV4 = v4.getImageReferenceEntityList();
+        for (edu.stanford.hakan.aim4api.base.ImageReferenceEntity itemV4 : listV4) {
+            if ("DicomImageReferenceEntity".equals(itemV4.getXsiType())) {
+                this.AddImageReference(new DICOMImageReference((edu.stanford.hakan.aim4api.base.DicomImageReferenceEntity) itemV4));
+            }
+        }
+    }
 }

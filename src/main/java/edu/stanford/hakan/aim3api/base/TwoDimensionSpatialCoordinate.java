@@ -27,10 +27,12 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
-import org.w3c.dom.Element;
+import edu.stanford.hakan.aim3api.utility.Converter;
+import edu.stanford.hakan.aim4api.base.TwoDimensionGeometricShapeEntity;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -174,7 +176,34 @@ public class TwoDimensionSpatialCoordinate extends SpatialCoordinate implements 
         }
         if (this.referencedFrameNumber == null ? oth.referencedFrameNumber != null : !this.referencedFrameNumber.equals(oth.referencedFrameNumber)) {
             return false;
-        }       
+        }
         return super.isEqualTo(other);
     }
+
+    public edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinate toAimV4(TwoDimensionGeometricShapeEntity twoDimensionGeometricShapeEntity) {
+        edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinate res = new edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinate();
+        res.setCoordinateIndex(this.getCoordinateIndex());
+        res.setX(this.getX());
+        res.setY(this.getY());
+        res.setTwoDimensionGeometricShapeEntity(twoDimensionGeometricShapeEntity);
+        //res.setTwoDimensionSpatialCoordinateCollection(twoDimensionSpatialCoordinateCollection);
+        res.getTwoDimensionGeometricShapeEntity().setReferencedFrameNumber(this.getReferencedFrameNumber());
+        res.getTwoDimensionGeometricShapeEntity().setImageReferenceUid(Converter.toII(this.getImageReferenceUID()));
+        return res;
+    }
+
+    public TwoDimensionSpatialCoordinate(edu.stanford.hakan.aim4api.base.TwoDimensionSpatialCoordinate v4) {
+        setXsiType("TwoDimensionSpatialCoordinate");
+        this.setCagridId(0);
+        this.setCoordinateIndex(v4.getCoordinateIndex());
+        this.setX(v4.getX());
+        this.setY(v4.getY());
+        if (v4.getTwoDimensionGeometricShapeEntity() != null && v4.getTwoDimensionGeometricShapeEntity().getImageReferenceUid() != null) {
+            this.setImageReferenceUID(v4.getTwoDimensionGeometricShapeEntity().getImageReferenceUid().getRoot());
+        }
+        if (v4.getTwoDimensionGeometricShapeEntity() != null) {
+            this.setReferencedFrameNumber(v4.getTwoDimensionGeometricShapeEntity().getReferencedFrameNumber());
+        }
+    }
+
 }

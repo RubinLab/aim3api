@@ -27,10 +27,13 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
+import edu.stanford.hakan.aim4api.base.CD;
+import edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristic;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -47,10 +50,9 @@ public class AnatomicEntityCharacteristic implements IAimXMLOperations {
     private String codingSchemeVersion;
     private Double annotatorConfidence;
     private String label;
-    private CharacteristicQuantificationCollection characteristicQuantificationCollection;
+    private CharacteristicQuantificationCollection characteristicQuantificationCollection = new CharacteristicQuantificationCollection();
 
     public AnatomicEntityCharacteristic() {
-        this.characteristicQuantificationCollection = new CharacteristicQuantificationCollection();
     }
 
     public AnatomicEntityCharacteristic(Integer cagridId, String codeValue, String codeMeaning, String codingSchemeDesignator, String codingSchemeVersion, Double annotatorConfidence, String label) {
@@ -61,7 +63,6 @@ public class AnatomicEntityCharacteristic implements IAimXMLOperations {
         this.codingSchemeVersion = codingSchemeVersion;
         this.annotatorConfidence = annotatorConfidence;
         this.label = label;
-        this.characteristicQuantificationCollection = new CharacteristicQuantificationCollection();
     }
 
     public Double getAnnotatorConfidence() {
@@ -134,8 +135,6 @@ public class AnatomicEntityCharacteristic implements IAimXMLOperations {
 
     @Override
     public Node getXMLNode(Document doc) throws AimException {
-
-
         this.Control();
         Element anatomicEntityCharacteristic = doc.createElement("AnatomicEntityCharacteristic");
         anatomicEntityCharacteristic.setAttribute("cagridId", this.cagridId.toString());
@@ -274,5 +273,46 @@ public class AnatomicEntityCharacteristic implements IAimXMLOperations {
             return false;
         }
         return this.characteristicQuantificationCollection.isEqualTo(oth.characteristicQuantificationCollection);
+    }
+
+    public edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristic toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristic res = new edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristic();
+        CD typeCode = new CD();
+        typeCode.setCode(this.getCodeValue());
+        typeCode.setCodeSystem(this.getCodeMeaning());
+        typeCode.setCodeSystemName(this.getCodingSchemeDesignator());
+        typeCode.setCodeSystemVersion(this.getCodingSchemeVersion());
+        res.addTypeCode(typeCode);
+        res.setAnnotatorConfidence(this.getAnnotatorConfidence());
+        res.setLabel(Converter.toST(this.getLabel()));
+        res.setCharacteristicQuantificationCollection(this.getCharacteristicQuantificationCollection().toAimV4());
+        return res;
+    }
+
+    AnatomicEntityCharacteristic(ImagingPhysicalEntityCharacteristic v4) {
+         this.setCagridId(0);
+        if (v4.getListTypeCode().size() > 0) {
+            CD typeCode = v4.getListTypeCode().get(0);
+            if (typeCode.getCode() != null) {
+                this.setCodeValue(typeCode.getCode());
+            }
+            if (typeCode.getCodeSystem() != null) {
+                this.setCodeMeaning(typeCode.getCodeSystem());
+            }
+            if (typeCode.getCodeSystemName() != null) {
+                this.setCodingSchemeDesignator(typeCode.getCodeSystemName());
+            }
+            if (typeCode.getCodeSystemVersion() != null) {
+                this.setCodingSchemeVersion(typeCode.getCodeSystemVersion());
+            }
+        }
+
+        this.setAnnotatorConfidence(v4.getAnnotatorConfidence());
+        if (v4.getLabel() != null) {
+            this.setLabel(v4.getLabel().getValue());
+        }
+        if (v4.getCharacteristicQuantificationCollection().getCharacteristicQuantificationList().size() > 0) {
+            this.setCharacteristicQuantificationCollection(new CharacteristicQuantificationCollection(v4.getCharacteristicQuantificationCollection()));
+        }
     }
 }

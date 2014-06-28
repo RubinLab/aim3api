@@ -101,4 +101,23 @@ public class AnatomicEntityCharacteristicCollection implements IAimXMLOperations
         }
         return true;
     }
+
+    public edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristicCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristicCollection res = new edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristicCollection();
+        List<edu.stanford.hakan.aim3api.base.AnatomicEntityCharacteristic> list = this.getAnatomicEntityCharacteristicList();
+        for (edu.stanford.hakan.aim3api.base.AnatomicEntityCharacteristic itemV3 : list) {
+            res.addImagingPhysicalEntityCharacteristic(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public AnatomicEntityCharacteristicCollection(edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristicCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristic> listV4 = v4.getImagingPhysicalEntityCharacteristicList();
+        for (edu.stanford.hakan.aim4api.base.ImagingPhysicalEntityCharacteristic itemV4 : listV4) {
+            this.AddAnatomicEntityCharacteristic(new AnatomicEntityCharacteristic(itemV4));
+        }
+    }
+
+    public AnatomicEntityCharacteristicCollection() {
+    }
 }

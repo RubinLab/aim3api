@@ -27,69 +27,70 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author Hakan BULU
  */
 public class Dimension implements IAimXMLOperations {
-
+    
     private Integer cagridId;
     private Integer index;
     private Integer size;
     private String label;
-
+    
     public Dimension() {
     }
-
+    
     public Dimension(Integer cagridId, Integer index, Integer size, String label) {
         this.cagridId = cagridId;
         this.index = index;
         this.size = size;
         this.label = label;
     }
-
+    
     public Integer getCagridId() {
         return cagridId;
     }
-
+    
     public void setCagridId(Integer cagridId) {
         this.cagridId = cagridId;
     }
-
+    
     public Integer getIndex() {
         return index;
     }
-
+    
     public void setIndex(Integer index) {
         this.index = index;
     }
-
+    
     public String getLabel() {
         return label;
     }
-
+    
     public void setLabel(String label) {
         this.label = label;
     }
-
+    
     public Integer getSize() {
         return size;
     }
-
+    
     public void setSize(Integer size) {
         this.size = size;
     }
-
+    
     @Override
     public Node getXMLNode(Document doc) throws AimException {
-
+        
         this.Control();
-
+        
         Element dimension = doc.createElement("Dimension");
         dimension.setAttribute("cagridId", this.cagridId.toString());
         dimension.setAttribute("index", this.index.toString());
@@ -97,7 +98,7 @@ public class Dimension implements IAimXMLOperations {
         dimension.setAttribute("label", this.label);
         return dimension;
     }
-
+    
     @Override
     public void setXMLNode(Node node) {
         NamedNodeMap map = node.getAttributes();
@@ -106,7 +107,7 @@ public class Dimension implements IAimXMLOperations {
         this.size = Integer.parseInt(map.getNamedItem("size").getNodeValue());
         this.label = map.getNamedItem("label").getNodeValue();
     }
-
+    
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
         
@@ -114,31 +115,31 @@ public class Dimension implements IAimXMLOperations {
         
         Element eDimension = doc.createElement(Prefix + "Dimension");
         eDimension.setAttribute("rdf:ID", "Dimension_".concat(unquieID));
-
+        
         Element eCagridId = doc.createElement(Prefix + "cagridId");
         eCagridId.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#int");
         eCagridId.setTextContent(this.cagridId.toString());
         eDimension.appendChild(eCagridId);
-
+        
         Element eIndex = doc.createElement(Prefix + "index");
         eIndex.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#int");
         eIndex.setTextContent(this.index.toString());
         eDimension.appendChild(eIndex);
-
+        
         Element eSize = doc.createElement(Prefix + "size");
         eSize.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#int");
         eSize.setTextContent(this.size.toString());
         eDimension.appendChild(eSize);
-
+        
         Element eLabel = doc.createElement(Prefix + "label");
         eLabel.setAttribute("rdf:datatype", "http://www.w3.org/2001/XMLSchema#string");
         eLabel.setTextContent(this.label.toString());
         eDimension.appendChild(eLabel);
-
+        
         return eDimension;
-
+        
     }
-
+    
     private void Control() throws AimException {
         if (getCagridId() == null) {
             throw new AimException("AimException: Dimension's cagridId can not be null");
@@ -169,5 +170,22 @@ public class Dimension implements IAimXMLOperations {
             return false;
         }
         return true;
+    }
+    
+    public edu.stanford.hakan.aim4api.base.Dimension toAimV4() {
+        edu.stanford.hakan.aim4api.base.Dimension res = new edu.stanford.hakan.aim4api.base.Dimension();
+        res.setIndex(this.getIndex());
+        res.setLabel(Converter.toST(this.getLabel()));
+        res.setSize(this.getSize());
+        return res;
+    }
+    
+    public Dimension(edu.stanford.hakan.aim4api.base.Dimension v4) {
+        this.setCagridId(0);
+        this.setIndex(v4.getIndex());
+        if (v4.getLabel() != null) {
+            this.setLabel(v4.getLabel().getValue());
+        }
+        this.setSize(v4.getSize());
     }
 }

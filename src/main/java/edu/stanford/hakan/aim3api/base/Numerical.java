@@ -27,10 +27,11 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 
 /**
  *
@@ -84,7 +85,7 @@ public class Numerical extends CharacteristicQuantification implements IAimXMLOp
     public Node getXMLNode(Document doc) throws AimException {
 
         this.Control();
-        
+
         Element characteristicQuantification = (Element) super.getXMLNode(doc);
         characteristicQuantification.setAttribute("ucumString", this.getUcumString());
         characteristicQuantification.setAttribute("value", this.getValue().toString());
@@ -110,7 +111,7 @@ public class Numerical extends CharacteristicQuantification implements IAimXMLOp
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
 
         this.Control();
-        
+
         Element eNumerical = (Element) super.getRDFNode(doc, unquieID, Prefix);
 
         Element eUcumString = doc.createElement(Prefix + "ucumString");
@@ -140,7 +141,7 @@ public class Numerical extends CharacteristicQuantification implements IAimXMLOp
             throw new AimException("AimException: Numerical's value can not be null");
         }
     }
-    
+
     @Override
     public boolean isEqualTo(Object other) {
         Numerical oth = (Numerical) other;
@@ -152,12 +153,32 @@ public class Numerical extends CharacteristicQuantification implements IAimXMLOp
         }
         if (this.operator == null ? oth.operator != null : !this.operator.equals(oth.operator)) {
             return false;
-        }     
+        }
         return super.isEqualTo(other);
     }
+
+    @Override
+    public edu.stanford.hakan.aim4api.base.CharacteristicQuantification toAimV4() {
+        edu.stanford.hakan.aim4api.base.Numerical res = new edu.stanford.hakan.aim4api.base.Numerical();
+        res.setAnnotatorConfidence(this.getAnnotatorConfidence());//
+        res.setValue(this.getValue());//
+        res.setUcumString(Converter.toST(this.getUcumString()));//
+        res.setOperator(Converter.toAimV4(this.getComparisonOperators()));//
+        res.setComment(Converter.toST(this.getName()));//
+        return res;
+    }
+
+    public Numerical(edu.stanford.hakan.aim4api.base.Numerical v4) {
+        setXsiType("Numerical");
+        this.setCagridId(0);
+        this.setAnnotatorConfidence(v4.getAnnotatorConfidence());
+        if (v4.getUcumString() != null) {
+            this.setUcumString(v4.getUcumString().getValue());
+        }
+        if (v4.getComment() != null) {
+            this.setName(v4.getComment().getValue());
+        }
+        this.setValue(v4.getValue());
+        this.setComparisonOperators(Converter.toAimV3(v4.getOperator()));
+    }
 }
-
-/*
- * 
- */
-

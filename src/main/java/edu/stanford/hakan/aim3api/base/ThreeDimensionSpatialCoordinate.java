@@ -44,7 +44,6 @@ public class ThreeDimensionSpatialCoordinate extends SpatialCoordinate implement
     private String frameOfReferenceUID;
 
     public ThreeDimensionSpatialCoordinate() {
-
         setXsiType("ThreeDimensionSpatialCoordinate");
     }
 

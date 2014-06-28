@@ -27,10 +27,12 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
+import edu.stanford.hakan.aim4api.base.CD;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 
 /**
  *
@@ -179,7 +181,45 @@ public class NonQuantifiable extends CharacteristicQuantification implements IAi
         }
         if (this.codingSchemeVersion == null ? oth.codingSchemeVersion != null : !this.codingSchemeVersion.equals(oth.codingSchemeVersion)) {
             return false;
-        }        
+        }
         return super.isEqualTo(other);
+    }
+
+    @Override
+    public edu.stanford.hakan.aim4api.base.CharacteristicQuantification toAimV4() {
+        edu.stanford.hakan.aim4api.base.NonQuantifiable res = new edu.stanford.hakan.aim4api.base.NonQuantifiable();
+        res.setAnnotatorConfidence(this.getAnnotatorConfidence());//
+        res.setComment(Converter.toST(this.getName()));//
+        CD typeCode = new CD();//
+        typeCode.setCode(this.getCodeValue());//
+        typeCode.setCodeSystem(this.getCodeMeaning());//
+        typeCode.setCodeSystemName(this.getCodingSchemeDesignator());//
+        typeCode.setCodeSystemVersion(this.getCodingSchemeVersion());//
+        res.setTypeCode(typeCode);//
+        return res;
+    }
+
+    public NonQuantifiable(edu.stanford.hakan.aim4api.base.NonQuantifiable v4) {
+        setXsiType("NonQuantifiable");
+        this.setCagridId(0);
+        if (v4.getTypeCode() != null) {
+            CD typeCode = v4.getTypeCode();
+            if (typeCode.getCode() != null) {
+                this.setCodeValue(typeCode.getCode());
+            }
+            if (typeCode.getCodeSystem() != null) {
+                this.setCodeMeaning(typeCode.getCodeSystem());
+            }
+            if (typeCode.getCodeSystemName() != null) {
+                this.setCodingSchemeDesignator(typeCode.getCodeSystemName());
+            }
+            if (typeCode.getCodeSystemVersion() != null) {
+                this.setCodingSchemeVersion(typeCode.getCodeSystemVersion());
+            }
+        }
+        this.setAnnotatorConfidence(v4.getAnnotatorConfidence());
+        if (v4.getComment() != null) {
+            this.setName(v4.getComment().getValue());
+        }
     }
 }

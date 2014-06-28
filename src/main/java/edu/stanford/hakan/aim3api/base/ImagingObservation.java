@@ -27,12 +27,14 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
+import edu.stanford.hakan.aim3api.utility.Converter;
+import edu.stanford.hakan.aim4api.base.CD;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -50,12 +52,10 @@ public class ImagingObservation implements IAimXMLOperations {
     private Double annotatorConfidence;
     private Boolean isPresent;
     private String label;
-    private ImagingObservationCharacteristicCollection imagingObservationCharacteristicCollection;
-    private List<ReferencedGeometricShape> listReferencedGeometricShape;
+    private ImagingObservationCharacteristicCollection imagingObservationCharacteristicCollection = new ImagingObservationCharacteristicCollection();
+    private List<ReferencedGeometricShape> listReferencedGeometricShape = new ArrayList<ReferencedGeometricShape>();
 
     public ImagingObservation() {
-        this.imagingObservationCharacteristicCollection = new ImagingObservationCharacteristicCollection();
-        this.listReferencedGeometricShape = new ArrayList<ReferencedGeometricShape>();
     }
 
     public ImagingObservation(Integer cagridId, String codeValue, String codeMeaning, String codingSchemeDesignator, String codingSchemeVersion, String comment, Double annotatorConfidence, Boolean isPresent, String label) {
@@ -68,8 +68,6 @@ public class ImagingObservation implements IAimXMLOperations {
         this.annotatorConfidence = annotatorConfidence;
         this.isPresent = isPresent;
         this.label = label;
-        this.imagingObservationCharacteristicCollection = new ImagingObservationCharacteristicCollection();
-        this.listReferencedGeometricShape = new ArrayList<ReferencedGeometricShape>();
     }
 
     public void addReferencedGeometricShape(ReferencedGeometricShape newReferencedGeometricShape) {
@@ -247,9 +245,9 @@ public class ImagingObservation implements IAimXMLOperations {
 
     @Override
     public Node getRDFNode(Document doc, String unquieID, String Prefix) throws AimException {
-        
+
         this.Control();
-        
+
         Element eImagingObservation = doc.createElement(Prefix + "ImagingObservation");
         eImagingObservation.setAttribute("rdf:ID", "ImagingObservation_".concat(unquieID));
 
@@ -315,7 +313,6 @@ public class ImagingObservation implements IAimXMLOperations {
 
         return eImagingObservation;
 
-
     }
 
     private void Control() throws AimException {
@@ -335,7 +332,7 @@ public class ImagingObservation implements IAimXMLOperations {
             throw new AimException("AimException: ImagingObservation's label can not be null");
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         ImagingObservation oth = (ImagingObservation) other;
         if (this.cagridId != oth.cagridId) {
@@ -377,5 +374,51 @@ public class ImagingObservation implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.ImagingObservationEntity toAimV4() {
+        edu.stanford.hakan.aim4api.base.ImagingObservationEntity res = new edu.stanford.hakan.aim4api.base.ImagingObservationEntity();
+        res.setAnnotatorConfidence(this.getAnnotatorConfidence());//
+        res.setComment(Converter.toST(this.getComment()));//
+        CD typeCode = new CD();
+        typeCode.setCode(this.getCodeValue());//
+        typeCode.setCodeSystem(this.getCodeMeaning());//
+        typeCode.setCodeSystemName(this.getCodingSchemeDesignator());//
+        typeCode.setCodeSystemVersion(this.getCodingSchemeVersion());//
+        res.addTypeCode(typeCode);//
+        res.setImagingObservationCharacteristicCollection(this.getImagingObservationCharacteristicCollection().toAimV4());//
+        res.setIsPresent(this.getIsPresent());
+        res.setLabel(Converter.toST(this.getLabel()));
+        return res;
+    }
+
+    public ImagingObservation(edu.stanford.hakan.aim4api.base.ImagingObservationEntity v4) {
+        this.setCagridId(0);
+        if (v4.getListTypeCode().size() > 0) {
+            CD typeCode = v4.getListTypeCode().get(0);
+            if (typeCode.getCode() != null) {
+                this.setCodeValue(typeCode.getCode());
+            }
+            if (typeCode.getCodeSystem() != null) {
+                this.setCodeMeaning(typeCode.getCodeSystem());
+            }
+            if (typeCode.getCodeSystemName() != null) {
+                this.setCodingSchemeDesignator(typeCode.getCodeSystemName());
+            }
+            if (typeCode.getCodeSystemVersion() != null) {
+                this.setCodingSchemeVersion(typeCode.getCodeSystemVersion());
+            }
+        }
+        this.setAnnotatorConfidence(v4.getAnnotatorConfidence());
+        if (v4.getComment() != null) {
+            this.setComment(v4.getComment().getValue());
+        }
+        if (v4.getImagingObservationCharacteristicCollection().getImagingObservationCharacteristicList().size() > 0) {
+            this.setImagingObservationCharacteristicCollection(new ImagingObservationCharacteristicCollection(v4.getImagingObservationCharacteristicCollection()));
+        }
+        this.setIsPresent(v4.getIsPresent());
+        if (v4.getLabel() != null) {
+            this.setLabel(v4.getLabel().getValue());
+        }
     }
 }

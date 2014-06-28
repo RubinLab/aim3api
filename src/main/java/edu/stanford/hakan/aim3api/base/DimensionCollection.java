@@ -42,6 +42,9 @@ public class DimensionCollection implements IAimXMLOperations {
 
     private List<Dimension> listDimension = new ArrayList<Dimension>();
 
+    DimensionCollection() {
+    }
+
     public void AddDimension(Dimension newDimension) {
         this.listDimension.add(newDimension);
     }
@@ -87,7 +90,7 @@ public class DimensionCollection implements IAimXMLOperations {
             parentNode.appendChild(eHas);
         }
     }
-    
+
     public boolean isEqualTo(Object other) {
         DimensionCollection oth = (DimensionCollection) other;
         if (this.listDimension.size() != oth.listDimension.size()) {
@@ -99,5 +102,21 @@ public class DimensionCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.DimensionCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.DimensionCollection res = new edu.stanford.hakan.aim4api.base.DimensionCollection();
+        List<edu.stanford.hakan.aim3api.base.Dimension> list = this.getDimensionList();
+        for (edu.stanford.hakan.aim3api.base.Dimension itemV3 : list) {
+            res.addDimension(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public DimensionCollection(edu.stanford.hakan.aim4api.base.DimensionCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.Dimension> listV4 = v4.getDimensionList();
+        for (edu.stanford.hakan.aim4api.base.Dimension itemV4 : listV4) {
+            this.AddDimension(new Dimension(itemV4));
+        }
     }
 }

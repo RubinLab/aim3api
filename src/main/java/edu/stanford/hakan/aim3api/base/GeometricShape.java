@@ -27,11 +27,12 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
-import org.w3c.dom.NamedNodeMap;
+import edu.stanford.hakan.aim3api.utility.Converter;
 import java.util.List;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -47,7 +48,7 @@ public class GeometricShape implements IGeometricShape, IAimXMLOperations {
     private String lineThickness;
     private Boolean includeFlag;
     private Integer shapeIdentifier;
-    private SpatialCoordinateCollection spatialCoordinateCollection;
+    private SpatialCoordinateCollection spatialCoordinateCollection = new SpatialCoordinateCollection();
     private String xsiType;
 
     protected void setXsiType(String xsiType) {
@@ -59,7 +60,6 @@ public class GeometricShape implements IGeometricShape, IAimXMLOperations {
     }
 
     public GeometricShape() {
-        this.spatialCoordinateCollection = new SpatialCoordinateCollection();
     }
 
     public GeometricShape(Integer cagridId, String lineColor, String lineOpacity, String lineStyle, String lineThickness, Boolean includeFlag, Integer shapeIdentifier) {
@@ -70,7 +70,6 @@ public class GeometricShape implements IGeometricShape, IAimXMLOperations {
         this.lineThickness = lineThickness;
         this.includeFlag = includeFlag;
         this.shapeIdentifier = shapeIdentifier;
-        this.spatialCoordinateCollection = new SpatialCoordinateCollection();
     }
 
     @Override
@@ -315,4 +314,32 @@ public class GeometricShape implements IGeometricShape, IAimXMLOperations {
         }
         return this.spatialCoordinateCollection.isEqualTo(oth.spatialCoordinateCollection);
     }
+
+    public edu.stanford.hakan.aim4api.base.MarkupEntity toAimV4() {
+        edu.stanford.hakan.aim4api.base.TwoDimensionGeometricShapeEntity res = null;
+
+        if ("Circle".equals(this.getXsiType())) {
+            res = new edu.stanford.hakan.aim4api.base.TwoDimensionCircle();
+        } else if ("Ellipse".equals(this.getXsiType())) {
+            res = new edu.stanford.hakan.aim4api.base.TwoDimensionEllipse();
+        } else if ("MultiPoint".equals(this.getXsiType())) {
+            res = new edu.stanford.hakan.aim4api.base.TwoDimensionMultiPoint();
+        } else if ("Point".equals(this.getXsiType())) {
+            res = new edu.stanford.hakan.aim4api.base.TwoDimensionPoint();
+        } else if ("Polyline".equals(this.getXsiType())) {
+            res = new edu.stanford.hakan.aim4api.base.TwoDimensionPolyline();
+        }
+
+        res.setIncludeFlag(this.getIncludeFlag());
+        res.setLineColor(Converter.toST(this.getLineColor()));
+        res.setLineOpacity(Converter.toST(this.getLineOpacity()));
+        res.setLineStyle(Converter.toST(this.getLineStyle()));
+        res.setLineThickness(Converter.toST(this.getLineThickness()));
+        res.setShapeIdentifier(this.getShapeIdentifier());
+        res.setTwoDimensionSpatialCoordinateCollection(this.getSpatialCoordinateCollection().toAimV4(res));
+        return res;
+    }
+
+//    public GeometricShape(edu.stanford.hakan.aim4api.base.MarkupEntity v4) {        
+//    }
 }

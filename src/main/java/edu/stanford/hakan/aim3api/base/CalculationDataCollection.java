@@ -42,6 +42,9 @@ public class CalculationDataCollection implements IAimXMLOperations {
 
     private List<CalculationData> listCalculationData = new ArrayList<CalculationData>();
 
+    public CalculationDataCollection() {
+    }
+
     public void AddCalculationData(CalculationData newCalculationData) {
         this.listCalculationData.add(newCalculationData);
     }
@@ -76,20 +79,19 @@ public class CalculationDataCollection implements IAimXMLOperations {
     }
 
     @Override
-    public Node getRDFNode(Document doc, String unquieID,String Prefix) {
+    public Node getRDFNode(Document doc, String unquieID, String Prefix) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void appendNodes(Document doc, String unquieID, Node parentNode,String Prefix) throws AimException {
+    public void appendNodes(Document doc, String unquieID, Node parentNode, String Prefix) throws AimException {
         for (int i = 0; i < listCalculationData.size(); i++) {
             Element eHas = doc.createElement(Prefix.concat("hasCalculationData"));
-            eHas.appendChild(listCalculationData.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)),Prefix));
+            eHas.appendChild(listCalculationData.get(i).getRDFNode(doc, unquieID.concat("_").concat(Integer.toString(i + 1)), Prefix));
             parentNode.appendChild(eHas);
-            
+
         }
     }
-    
-        
+
     public boolean isEqualTo(Object other) {
         CalculationDataCollection oth = (CalculationDataCollection) other;
         if (this.listCalculationData.size() != oth.listCalculationData.size()) {
@@ -101,5 +103,21 @@ public class CalculationDataCollection implements IAimXMLOperations {
             }
         }
         return true;
+    }
+
+    public edu.stanford.hakan.aim4api.base.CalculationDataCollection toAimV4() {
+        edu.stanford.hakan.aim4api.base.CalculationDataCollection res = new edu.stanford.hakan.aim4api.base.CalculationDataCollection();
+        List<edu.stanford.hakan.aim3api.base.CalculationData> list = this.getCalculationDataList();
+        for (edu.stanford.hakan.aim3api.base.CalculationData itemV3 : list) {
+            res.addCalculationData(itemV3.toAimV4());
+        }
+        return res;
+    }
+
+    public CalculationDataCollection(edu.stanford.hakan.aim4api.base.CalculationDataCollection v4) {
+        List<edu.stanford.hakan.aim4api.base.CalculationData> listV4 = v4.getCalculationDataList();
+        for (edu.stanford.hakan.aim4api.base.CalculationData itemV4 : listV4) {
+            this.AddCalculationData(new CalculationData(itemV4));
+        }
     }
 }
