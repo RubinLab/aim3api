@@ -29,8 +29,11 @@ package edu.stanford.hakan.aim3api.base;
 
 import edu.stanford.hakan.aim3api.utility.Converter;
 import edu.stanford.hakan.aim4api.base.CD;
+import edu.stanford.hakan.aim4api.base.II;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -236,7 +239,9 @@ public class ImageAnnotation extends Annotation implements IAimXMLOperations {
     public edu.stanford.hakan.aim4api.base.ImageAnnotationCollection toAimV4() throws AimException {
         edu.stanford.hakan.aim4api.base.ImageAnnotationCollection iacV4 = new edu.stanford.hakan.aim4api.base.ImageAnnotationCollection();
         
+        iacV4.setUniqueIdentifier(new II(this.getUniqueIdentifier()));
         iacV4.setDateTime(this.getDateTime());//
+        
 
         if (this.getListEquipment().size() > 0) {//
             iacV4.setEquipment(this.getListEquipment().get(0).toAimV4());
