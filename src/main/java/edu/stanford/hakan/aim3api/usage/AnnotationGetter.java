@@ -78,7 +78,8 @@ public class AnnotationGetter {
             String data = "";
 
             data += "<?xml version='1.0' encoding='UTF-8'?>";
-            data += "<query xmlns='http://exist.sourceforge.net/NS/exist' start='1' max='10000'>";
+            //data += "<query xmlns='http://exist.sourceforge.net/NS/exist' start='1' max='10000'>";
+            data += "<query xmlns='http://exist.sourceforge.net/NS/exist' start='1' max='50'>";
             data += "<text>";
             data += XQuery;
             data += "</text>";
@@ -128,42 +129,49 @@ public class AnnotationGetter {
         }
     }
 
-    public static String removeImageAnnotationFromServer(String Url, String nameSpace, String collection, String dbUserName, String dbUserPassword, String uniqueIdentifier) throws AimException {
+    public static String removeImageAnnotationFromServer(String Url, String nameSpace, String collection, String dbUserName, String dbUserPassword, String uniqueIdentifier, boolean aimV4) throws AimException {
         try {
-            if (!AnnotationGetter.isExistInTheServer(Url, nameSpace, collection, dbUserName, dbUserPassword, uniqueIdentifier)) {
-                throw new AimException("AimException: The Image Annotation which you want to remove is not exist. Please check your parameters.");
+            if (!aimV4) {
+	            if (!AnnotationGetter.isExistInTheServer(Url, nameSpace, collection, dbUserName, dbUserPassword, uniqueIdentifier)) {
+	                throw new AimException("AimException: The Image Annotation which you want to remove is not exist. Please check your parameters.");
+	            }
+	
+	            String requestURL = Utility.correctToUrl(Url) + "rest/" + collection + "/AIM_" + uniqueIdentifier + ".xml";
+	//            String requestURL = "http://localhost:8080/exist/rest/testCollection/AIM_6da79acc-2817-4f53-92b8-506304a590f4.xml";
+	
+	            URL url = new URL(requestURL);
+	            URLConnection conn = url.openConnection();
+	
+	            conn.setRequestProperty("Content-Type", "application/xml");
+	            conn.setDoOutput(true);
+	            conn.setDoInput(true);
+	
+	            if (conn instanceof HttpURLConnection) {
+	                ((HttpURLConnection) conn).setRequestMethod("DELETE");
+	                ((HttpURLConnection) conn).setRequestProperty("Content-Type", "application/xml");
+	                if (!"".equals(dbUserName.trim()) || !"".equals(dbUserPassword.trim())) {
+	                    String userPassword = dbUserName + ":" + dbUserPassword;
+	                    String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
+	                    ((HttpURLConnection) conn).setRequestProperty("Authorization", "Basic " + encoding);
+	                }
+	                ((HttpURLConnection) conn).connect();
+	            }
+	
+	            // Get the response 
+	            StringBuilder answer = new StringBuilder();
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                answer.append(line);
+	            }
+	            reader.close();
             }
-
-            String requestURL = Utility.correctToUrl(Url) + "rest/" + collection + "/AIM_" + uniqueIdentifier + ".xml";
-//            String requestURL = "http://localhost:8080/exist/rest/testCollection/AIM_6da79acc-2817-4f53-92b8-506304a590f4.xml";
-
-            URL url = new URL(requestURL);
-            URLConnection conn = url.openConnection();
-
-            conn.setRequestProperty("Content-Type", "application/xml");
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-
-            if (conn instanceof HttpURLConnection) {
-                ((HttpURLConnection) conn).setRequestMethod("DELETE");
-                ((HttpURLConnection) conn).setRequestProperty("Content-Type", "application/xml");
-                if (!"".equals(dbUserName.trim()) || !"".equals(dbUserPassword.trim())) {
-                    String userPassword = dbUserName + ":" + dbUserPassword;
-                    String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
-                    ((HttpURLConnection) conn).setRequestProperty("Authorization", "Basic " + encoding);
+            else{
+                if (!edu.stanford.hakan.aim4api.usage.AnnotationGetter.isExistInTheServer(Url, nameSpace, collection, dbUserName, dbUserPassword, uniqueIdentifier)) {
+                    throw new AimException("AimException: The Image Annotation which you want to delete is not exist. Please check your parameters.");
                 }
-                ((HttpURLConnection) conn).connect();
+                edu.stanford.hakan.aim4api.database.exist.ExistManager.removeImageAnnotationCollectionFromServer(Url, nameSpace, collection, dbUserName, dbUserPassword, uniqueIdentifier);
             }
-
-            // Get the response 
-            StringBuilder answer = new StringBuilder();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                answer.append(line);
-            }
-            reader.close();
-
             //Output the response 
             return "XML Saving operation is Successful.";
         } catch (Exception ex) {
@@ -171,28 +179,39 @@ public class AnnotationGetter {
         }
     }
 
-    public static void deleteImageAnnotationFromServer(String serverURL, String namespace, String collection, String PathXSD, String dbUserName, String dbUserPassword, String uniqueIdentifier) throws AimException {
+    public static void deleteImageAnnotationFromServer(String serverURL, String namespace, String collection, String PathXSD, String dbUserName, String dbUserPassword, String uniqueIdentifier, boolean aimV4) throws AimException {
         try {
-            if (!AnnotationGetter.isExistInTheServer(serverURL, namespace, collection, dbUserName, dbUserPassword, uniqueIdentifier)) {
-                throw new AimException("AimException: The Image Annotation which you want to delete is not exist. Please check your parameters.");
-            }
-            ImageAnnotation iAnno = getImageAnnotationFromServerByUniqueIdentifier(serverURL, namespace, collection, dbUserName, dbUserPassword, uniqueIdentifier);
-            String aimVersion = iAnno.getAimVersion();
-            String groupID = "";
-            if (aimVersion.indexOf("^") < 0) {
-                //*** which means that, the annotation was created before the versioning mechanism.
-                groupID = "G:" + GenerateId.getUUID();
-                iAnno.setAimVersion("AIM.3.0^1^Deleted^" + Utility.getNowAtGMT() + "^null^" + groupID, "al536anhb55555");
-            } else if (aimVersion.indexOf("Current") < 0) {
-                throw new AimException("AimException: You can just delete, current version of the image annotation. Please check your parameters.");
+            if (!aimV4) {
+                if (!AnnotationGetter.isExistInTheServer(serverURL, namespace,
+                        collection, dbUserName, dbUserPassword,
+                        uniqueIdentifier)) {
+                    throw new AimException(
+                            "AimException: The Image Annotation which you want to delete is not exist. Please check your parameters.");
+                }
+                ImageAnnotation iAnno = getImageAnnotationFromServerByUniqueIdentifier(serverURL, namespace, collection, dbUserName, dbUserPassword, uniqueIdentifier);
+                String aimVersion = iAnno.getAimVersion();
+                String groupID = "";
+                if (!aimVersion.contains("^")) {
+                    // *** which means that, the annotation was created before
+                    // the versioning mechanism.
+                    groupID = "G:" + GenerateId.getUUID();
+                    iAnno.setAimVersion("AIM.3.0^1^Deleted^" + Utility.getNowAtGMT() + "^null^" + groupID, "al536anhb55555");
+                } else if (!aimVersion.contains("Current")) {
+                    throw new AimException("AimException: You can just delete, current version of the image annotation. Please check your parameters.");
+                } else {
+                    String[] aimVersionFields = iAnno.getAimVersion().split("\\^");
+                    String versionNumber = aimVersionFields[1];
+                    String status = aimVersionFields[2];
+                    String previosUID = aimVersionFields[4];
+                    groupID = aimVersionFields[5];
+                    iAnno.setAimVersion("AIM.3.0^" + versionNumber + "^Deleted^" + Utility.getNowAtGMT() + "^" + previosUID + "^" + groupID, "al536anhb55555");
+                    AnnotationBuilder.saveToServer(iAnno, serverURL, namespace, collection, PathXSD, dbUserName, dbUserPassword);
+                }
             } else {
-                String[] aimVersionFields = iAnno.getAimVersion().split("\\^");
-                String versionNumber = aimVersionFields[1];
-                String status = aimVersionFields[2];
-                String previosUID = aimVersionFields[4];
-                groupID = aimVersionFields[5];
-                iAnno.setAimVersion("AIM.3.0^" + versionNumber + "^Deleted^" + Utility.getNowAtGMT() + "^" + previosUID + "^" + groupID, "al536anhb55555");
-                AnnotationBuilder.saveToServer(iAnno, serverURL, namespace, collection, PathXSD, dbUserName, dbUserPassword);
+                if (!edu.stanford.hakan.aim4api.usage.AnnotationGetter.isExistInTheServer(serverURL, namespace, collection, dbUserName, dbUserPassword, uniqueIdentifier)) {
+                    throw new AimException("AimException: The Image Annotation which you want to delete is not exist. Please check your parameters.");
+                }
+                edu.stanford.hakan.aim4api.database.exist.ExistManager.removeImageAnnotationCollectionFromServer(serverURL, namespace, collection, dbUserName, dbUserPassword, uniqueIdentifier);
             }
         } catch (Exception ex) {
             throw new AimException("AimException: " + ex.getMessage());

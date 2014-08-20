@@ -66,7 +66,7 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
     private String precedentReferencedAnnotationUID;
     private String xsiType;
     private String OntologyPrefix;
-    
+
     public Annotation intitalState = null;
     private String accessKey = "al536anhb55555";
 
@@ -130,11 +130,13 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
     }
 
     @Override
-    public void setAimVersion(String aimVersion,String accessKey) {
-        if(!accessKey.equals(this.accessKey))
+    public void setAimVersion(String aimVersion, String accessKey) {
+        if (!accessKey.equals(this.accessKey)) {
             return;
+        }
         this.aimVersion = aimVersion;
     }
+
     @Override
     public AnatomicEntityCollection getAnatomicEntityCollection() {
         return anatomicEntityCollection;
@@ -301,12 +303,17 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
     }
 
     @Override
-    public void setUniqueIdentifier(String uniqueIdentifier,String accessKey) {        
-        if(!accessKey.equals(this.accessKey))
+    public void setUniqueIdentifier(String uniqueIdentifier, String accessKey) {
+        if (!accessKey.equals(this.accessKey)) {
             return;
+        }
         this.uniqueIdentifier = uniqueIdentifier;
     }
-    
+
+    public void refreshUniqueIdentifier() {
+        this.uniqueIdentifier = GenerateId.getUUID();
+    }
+
     @Override
     public Node getXMLNode(Document doc) throws AimException {
 
@@ -380,8 +387,6 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
             map = node.getAttributes();
             this.aimVersion = "AIM.3.0";
         }
-
-
 
         this.cagridId = Integer.parseInt(map.getNamedItem("cagridId").getNodeValue());
         this.dateTime = map.getNamedItem("dateTime").getNodeValue();
@@ -517,7 +522,6 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
         this.inferenceCollection.appendNodes(doc, unquieID, eAnnotation, Prefix);
         this.anatomicEntityCollection.appendNodes(doc, unquieID, eAnnotation, Prefix);
         this.imagingObservationCollection.appendNodes(doc, unquieID, eAnnotation, Prefix);
-
 
         for (int i = 0; i < listUser.size(); i++) {
             Element eHas = doc.createElement(Prefix + "hasUser");
@@ -658,10 +662,8 @@ public class Annotation implements IAimXMLOperations, IAnnotation {
         }
         return true;
     }
-    
-    
-    public boolean  isEdited()
-    {
+
+    public boolean isEdited() {
         return !this.isEqualTo(this.intitalState);
     }
 }
