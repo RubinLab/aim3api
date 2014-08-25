@@ -508,7 +508,7 @@ public class AnnotationGetter {
         serverURL = Utility.correctToUrl(serverURL);
         control(serverURL, namespace, collection);
 
-        String aimQL = "SELECT FROM " + collection + " WHERE ImageAnnotation.cagridId = '0'";
+        String aimQL = "SELECT FROM " + collection + " WHERE ImageAnnotation.cagridId = '0' OR ImageAnnotation.cagridId <> '0'";
         List<ImageAnnotation> listAnno = getImageAnnotationsFromServerWithAimQuery(serverURL, namespace, dbUserName, dbUserPassword, aimQL, PathXSD, start, maxrecords);
         return listAnno;
     }
