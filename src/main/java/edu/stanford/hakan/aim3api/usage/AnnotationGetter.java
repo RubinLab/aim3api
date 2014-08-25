@@ -72,14 +72,17 @@ public class AnnotationGetter {
     }
 
     private static String getXMLStringFromExist(String Url, String XQuery, String dbUserName, String dbUserPassword) throws AimException {
+		return getXMLStringFromExist(Url, XQuery, dbUserName, dbUserPassword, 1, 10000);
+	}
+    
+    private static String getXMLStringFromExist(String Url, String XQuery, String dbUserName, String dbUserPassword, int start, int maxrecords) throws AimException {
         try {
             Url = Utility.correctToUrl(Url);
             String requestURL = Url + "rest/";
             String data = "";
 
             data += "<?xml version='1.0' encoding='UTF-8'?>";
-            //data += "<query xmlns='http://exist.sourceforge.net/NS/exist' start='1' max='10000'>";
-            data += "<query xmlns='http://exist.sourceforge.net/NS/exist' start='1' max='50'>";
+            data += "<query xmlns='http://exist.sourceforge.net/NS/exist' start='" + start + "' max='" + maxrecords + "'>";
             data += "<text>";
             data += XQuery;
             data += "</text>";
@@ -280,8 +283,12 @@ public class AnnotationGetter {
     }
 
     private static List<ImageAnnotation> getImageAnnotationListFromServer(String Url, String XQuery, String dbUserName, String dbUserPassword, String PathXSD) throws AimException {
+        return getImageAnnotationListFromServer(Url, XQuery, dbUserName, dbUserPassword, PathXSD, 1, 1000);
+    }
+
+   private static List<ImageAnnotation> getImageAnnotationListFromServer(String Url, String XQuery, String dbUserName, String dbUserPassword, String PathXSD, int start, int maxrecords) throws AimException {
         try {
-            String serverResponse = getXMLStringFromExist(Url, XQuery, dbUserName, dbUserPassword);
+            String serverResponse = getXMLStringFromExist(Url, XQuery, dbUserName, dbUserPassword, start, maxrecords);
             Document serverDoc = getDocumentFromString(serverResponse);
             List<ImageAnnotation> res = getImageAnnotationListFromDocument(serverDoc, PathXSD);
             return res;
@@ -494,6 +501,16 @@ public class AnnotationGetter {
     //*** ImageAnnotation.dateTime Contains
     public static List<ImageAnnotation> getImageAnnotationsFromServerByDateTimeContains(String serverURL, String namespace, String collection, String dbUserName, String dbUserPassword, String dateTime) throws AimException {
         return getImageAnnotationsFromServerByDateTimeContains(serverURL, namespace, collection, dbUserName, dbUserPassword, dateTime, "");
+    }
+
+    //*** Get all Annotations
+    public static List<ImageAnnotation> getAllImageAnnotationsFromServer(String serverURL, String namespace, String collection, String dbUserName, String dbUserPassword, String PathXSD, int start, int maxrecords) throws AimException {
+        serverURL = Utility.correctToUrl(serverURL);
+        control(serverURL, namespace, collection);
+
+        String aimQL = "SELECT FROM " + collection + " WHERE ImageAnnotation.cagridId = '0'";
+        List<ImageAnnotation> listAnno = getImageAnnotationsFromServerWithAimQuery(serverURL, namespace, dbUserName, dbUserPassword, aimQL, PathXSD, start, maxrecords);
+        return listAnno;
     }
 
     //*** ImageAnnotation.cagridId Equal
@@ -925,6 +942,10 @@ public class AnnotationGetter {
     }
 
     public static List<ImageAnnotation> getImageAnnotationsFromServerWithAimQuery(String serverURL, String namespace, String dbUserName, String dbUserPassword, String aimQuery, String PathXSD) throws AimException {
+        return getImageAnnotationsFromServerWithAimQuery(serverURL, namespace, dbUserName, dbUserPassword, aimQuery, PathXSD, 1, 10000);
+    }
+    
+    public static List<ImageAnnotation> getImageAnnotationsFromServerWithAimQuery(String serverURL, String namespace, String dbUserName, String dbUserPassword, String aimQuery, String PathXSD, int start, int maxrecords) throws AimException {
         /*if (PathXSD == null || "".equals(PathXSD.trim())) {
          throw new AimException("AimException: PathXSD must be defined");
          }*/
@@ -938,7 +959,7 @@ public class AnnotationGetter {
             throw new AimException("AimException: AimQuery must be defined");
         }
         String XQuery = AimQuery.convertToXQuery(aimQuery, namespace);
-        return getImageAnnotationListFromServer(serverURL, XQuery, dbUserName, dbUserPassword, PathXSD);//  getDocumentFromServer(serverURL, namespace, XQuery);       
+        return getImageAnnotationListFromServer(serverURL, XQuery, dbUserName, dbUserPassword, PathXSD, start, maxrecords);//  getDocumentFromServer(serverURL, namespace, XQuery);       
     }
 
     public static boolean isExistInTheServer(String serverURL, String namespace, String collection, String dbUserName, String dbUserPassword, String uniqueIdentifier) throws AimException {
