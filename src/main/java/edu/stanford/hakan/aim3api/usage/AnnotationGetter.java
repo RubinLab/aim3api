@@ -402,6 +402,24 @@ public class AnnotationGetter {
     public static ImageAnnotation getImageAnnotationFromServerByUniqueIdentifier(String serverURL, String namespace, String collection, String dbUserName, String dbUserPassword, String uniqueIdentifier) throws AimException {
         return getImageAnnotationFromServerByUniqueIdentifier(serverURL, namespace, collection, dbUserName, dbUserPassword, uniqueIdentifier, "");
     }
+    
+    //*** ImageAnnotation.uniqueIdentifier list Equals
+    public static List<ImageAnnotation> getImageAnnotationFromServerByUniqueIdentifierList(String serverURL, String namespace, String collection, String dbUserName, String dbUserPassword, String[] uniqueIdentifiers, String PathXSD) throws AimException {
+        serverURL = Utility.correctToUrl(serverURL);
+        control(serverURL, namespace, collection);
+        if (uniqueIdentifiers == null || "".equals(uniqueIdentifiers.length == 0)) {
+            throw new AimException("AimException: UniqueIdentifiers must be defined");
+        }
+
+        String aimQL = "SELECT FROM " + collection + " WHERE ";
+        String operator = "";
+        for (String uniqueIdentifier : uniqueIdentifiers)
+        {
+        	aimQL = aimQL + operator + "ImageAnnotation.uniqueIdentifier = '" + uniqueIdentifier + "'";
+        	operator = " OR ";
+        }
+        return getImageAnnotationsFromServerWithAimQuery(serverURL, namespace, dbUserName, dbUserPassword, aimQL, PathXSD);
+    }
 
     //*** Person.Name Equal
     public static List<ImageAnnotation> getImageAnnotationsFromServerByPersonNameEqual(String serverURL, String namespace, String collection, String dbUserName, String dbUserPassword, String PersonName, String PathXSD) throws AimException {
