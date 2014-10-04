@@ -27,10 +27,6 @@
  */
 package edu.stanford.hakan.aim3api.base;
 
-import edu.stanford.hakan.aim3api.utility.Converter;
-import edu.stanford.hakan.aim4api.base.CD;
-import edu.stanford.hakan.aim4api.base.II;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +34,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import edu.stanford.hakan.aim3api.utility.Converter;
+import edu.stanford.hakan.aim4api.base.CD;
+import edu.stanford.hakan.aim4api.base.II;
 
 /**
  *
@@ -122,6 +122,24 @@ public class ImageAnnotation extends Annotation implements IAimXMLOperations {
     public void addTextAnnotation(TextAnnotation newTextAnnotation) {
         this.textAnnotationCollection.AddTextAnnotation(newTextAnnotation);
     }
+	public String getFirstSeriesID() {
+		String result = "";
+
+		try {
+			List<ImageReference> imageList = getImageReferenceCollection()
+					.getImageReferenceList();
+			if (imageList.size() > 0) {
+				ImageReference imageReference = imageList.get(0);
+				DICOMImageReference dicomImageReference = (DICOMImageReference) imageReference;
+				ImageStudy imageStudy = dicomImageReference.getImageStudy();
+				ImageSeries imageSeries = imageStudy.getImageSeries();
+				result = imageSeries.getInstanceUID();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
     @Override
     public Node getXMLNode(Document doc) throws AimException {
