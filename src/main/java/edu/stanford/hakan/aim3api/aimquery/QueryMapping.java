@@ -66,6 +66,7 @@ public class QueryMapping {
         this.hashClasses.put("NonQuantifiable".toLowerCase(new Locale("\\u0131")), "AnatomicEntityCharacteristic/characteristicQuantificationCollection/NonQuantifiable");
         this.hashClasses.put("Interval".toLowerCase(new Locale("\\u0131")), "AnatomicEntityCharacteristic/characteristicQuantificationCollection/Interval");
         this.hashClasses.put("DICOMImageReference".toLowerCase(new Locale("\\u0131")), "ImageAnnotation/imageReferenceCollection/DICOMImageReference");
+        this.hashClasses.put("ImageReference".toLowerCase(new Locale("\\u0131")), "ImageAnnotation/imageReferenceCollection/ImageReference");
         this.hashClasses.put("WebImageReference".toLowerCase(new Locale("\\u0131")), "ImageAnnotation/imageReferenaceCollection/WebImageReference");
         //this.hashClasses.put("ImageStudy".toLowerCase(new Locale("\\u0131")), "DICOMImageReference/imageStudy/ImageStudy");
         this.hashClasses.put("ImageStudy".toLowerCase(new Locale("\\u0131")), "ImageReference/imageStudy/ImageStudy");
