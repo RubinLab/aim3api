@@ -99,6 +99,9 @@ public class QueryExpression {
                 xAttribute = "[contains(lower-case(@" + qMap.getAttribute(attributeName) + "),lower-case(" + value + "))]";
             }
         } else if (value.trim().startsWith("'")) {
+            if("uniqueIdentifier".equals(attributeName))
+            xAttribute = "[@" + qMap.getAttribute(attributeName) + " " + function + " " + value + "]";
+                else
             xAttribute = "[lower-case(@" + qMap.getAttribute(attributeName) + ") " + function + " lower-case(" + value + ")]";
         } else {
             xAttribute = "[@" + qMap.getAttribute(attributeName) + " " + function + " " + value + "]";
